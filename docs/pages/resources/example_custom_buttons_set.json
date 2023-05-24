@@ -1,0 +1,45 @@
+[{
+    "name": "Copy",
+    "feather": "Copy",
+    "hasText": true,
+    "alwaysOn": true,
+    "commands": ["copyAll"],
+    "style": {"top": "0.46rem", "right": "0.4rem"}
+  },{
+    "name": "Shortcuts",
+    "feather": "Type",
+    "class": "shortcuts-button",
+    "hasText": true,
+    "commands": ["toggleKeyboardShortcuts", ["conditionalExecute", {"targetQueryString": "#kbshortcutmenu", "condition": true, "command":["infoMessage", {"text":"VSCode keyboard shortcuts", "timeout": 2500, "classToggle": "show"}]}]],
+    "style": {"bottom": "calc(50% + 1.75rem)", "right": "0.4rem"}
+  },
+  {
+    "name": "Collapse",
+    "feather": "Minimize2",
+    "hasText": true,
+    "commands": ["selectall", "toggleSplitSelectionIntoLines","gotolinestart","gotolinestart", "backspace"],
+    "style": {"bottom": "calc(50% - 1.25rem)", "right": "0.4rem"}
+  },
+  {
+    "name": "Save",
+    "feather": "Save",
+    "hasText": true,
+    "commands": ["save-state", ["response","saved"]],
+    "response": "saved",
+    "style": {"bottom": "calc(50% - 4.25rem)", "right": "0.4rem"}
+  },{
+    "name": "Run",
+    "feather": "Play",
+    "primary": true,
+    "hasText": true,
+    "showWithIcon": true,
+    "commands": ["submit"],
+    "style": {"bottom": "0.44rem", "right": "0.4rem"}
+  },{
+    "name": "Command",
+    "feather": "Terminal",
+    "primary": true,
+    "hasText": true,
+    "commands": ["openCommandPallete"],
+    "style": {"bottom": "3.5rem", "right": "0.4rem"}
+  }]

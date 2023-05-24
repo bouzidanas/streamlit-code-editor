@@ -1,0 +1,1158 @@
+{
+    "showSettingsMenu": {
+        "name": "showSettingsMenu",
+        "description": "Show settings menu",
+        "bindKey": {
+            "win": "Ctrl-,",
+            "mac": "Command-,"
+        },
+        "readOnly": true
+    },
+    "goToNextError": {
+        "name": "goToNextError",
+        "description": "Go to next error",
+        "bindKey": {
+            "win": "Alt-E",
+            "mac": "F4"
+        },
+        "scrollIntoView": "animate",
+        "readOnly": true
+    },
+    "goToPreviousError": {
+        "name": "goToPreviousError",
+        "description": "Go to previous error",
+        "bindKey": {
+            "win": "Alt-Shift-E",
+            "mac": "Shift-F4"
+        },
+        "scrollIntoView": "animate",
+        "readOnly": true
+    },
+    "selectall": {
+        "name": "selectall",
+        "description": "Select all",
+        "bindKey": {
+            "win": "Ctrl-A",
+            "mac": "Command-A"
+        },
+        "readOnly": true
+    },
+    "centerselection": {
+        "name": "centerselection",
+        "description": "Center selection",
+        "bindKey": {
+            "win": null,
+            "mac": "Ctrl-L"
+        },
+        "readOnly": true
+    },
+    "gotoline": {
+        "name": "gotoline",
+        "description": "Go to line...",
+        "bindKey": {
+            "win": "Ctrl-L",
+            "mac": "Command-L"
+        },
+        "readOnly": true
+    },
+    "fold": {
+        "name": "fold",
+        "bindKey": {
+            "win": "Alt-L|Ctrl-F1",
+            "mac": "Command-Alt-L|Command-F1"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "unfold": {
+        "name": "unfold",
+        "bindKey": {
+            "win": "Alt-Shift-L|Ctrl-Shift-F1",
+            "mac": "Command-Alt-Shift-L|Command-Shift-F1"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "toggleFoldWidget": {
+        "name": "toggleFoldWidget",
+        "description": "Toggle fold widget",
+        "bindKey": {
+            "win": "F2",
+            "mac": "F2"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "toggleParentFoldWidget": {
+        "name": "toggleParentFoldWidget",
+        "description": "Toggle parent fold widget",
+        "bindKey": {
+            "win": "Alt-F2",
+            "mac": "Alt-F2"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldall": {
+        "name": "foldall",
+        "description": "Fold all",
+        "bindKey": {
+            "win": null,
+            "mac": "Ctrl-Command-Option-0"
+        },
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldAllComments": {
+        "name": "foldAllComments",
+        "description": "Fold all comments",
+        "bindKey": {
+            "win": null,
+            "mac": "Ctrl-Command-Option-0"
+        },
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldOther": {
+        "name": "foldOther",
+        "description": "Fold other",
+        "bindKey": {
+            "win": "Alt-0",
+            "mac": "Command-Option-0"
+        },
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "unfoldall": {
+        "name": "unfoldall",
+        "description": "Unfold all",
+        "bindKey": {
+            "win": "Alt-Shift-0",
+            "mac": "Command-Option-Shift-0"
+        },
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "findnext": {
+        "name": "findnext",
+        "description": "Find next",
+        "bindKey": {
+            "win": "Ctrl-K",
+            "mac": "Command-G"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "findprevious": {
+        "name": "findprevious",
+        "description": "Find previous",
+        "bindKey": {
+            "win": "Ctrl-Shift-K",
+            "mac": "Command-Shift-G"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "selectOrFindNext": {
+        "name": "selectOrFindNext",
+        "description": "Select or find next",
+        "bindKey": {
+            "win": "Alt-K",
+            "mac": "Ctrl-G"
+        },
+        "readOnly": true
+    },
+    "selectOrFindPrevious": {
+        "name": "selectOrFindPrevious",
+        "description": "Select or find previous",
+        "bindKey": {
+            "win": "Alt-Shift-K",
+            "mac": "Ctrl-Shift-G"
+        },
+        "readOnly": true
+    },
+    "find": {
+        "name": "find",
+        "description": "Find",
+        "bindKey": {
+            "win": "Ctrl-F",
+            "mac": "Command-F"
+        },
+        "readOnly": true
+    },
+    "overwrite": {
+        "name": "overwrite",
+        "description": "Overwrite",
+        "bindKey": "Insert",
+        "readOnly": true
+    },
+    "selecttostart": {
+        "name": "selecttostart",
+        "description": "Select to start",
+        "bindKey": {
+            "win": "Ctrl-Shift-Home",
+            "mac": "Command-Shift-Home|Command-Shift-Up"
+        },
+        "multiSelectAction": "forEach",
+        "readOnly": true,
+        "scrollIntoView": "animate",
+        "aceCommandGroup": "fileJump"
+    },
+    "gotostart": {
+        "name": "gotostart",
+        "description": "Go to start",
+        "bindKey": {
+            "win": "Ctrl-Home",
+            "mac": "Command-Home|Command-Up"
+        },
+        "multiSelectAction": "forEach",
+        "readOnly": true,
+        "scrollIntoView": "animate",
+        "aceCommandGroup": "fileJump"
+    },
+    "selectup": {
+        "name": "selectup",
+        "description": "Select up",
+        "bindKey": {
+            "win": "Shift-Up",
+            "mac": "Shift-Up|Ctrl-Shift-P"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "golineup": {
+        "name": "golineup",
+        "description": "Go line up",
+        "bindKey": {
+            "win": "Up",
+            "mac": "Up|Ctrl-P"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selecttoend": {
+        "name": "selecttoend",
+        "description": "Select to end",
+        "bindKey": {
+            "win": "Ctrl-Shift-End",
+            "mac": "Command-Shift-End|Command-Shift-Down"
+        },
+        "multiSelectAction": "forEach",
+        "readOnly": true,
+        "scrollIntoView": "animate",
+        "aceCommandGroup": "fileJump"
+    },
+    "gotoend": {
+        "name": "gotoend",
+        "description": "Go to end",
+        "bindKey": {
+            "win": "Ctrl-End",
+            "mac": "Command-End|Command-Down"
+        },
+        "multiSelectAction": "forEach",
+        "readOnly": true,
+        "scrollIntoView": "animate",
+        "aceCommandGroup": "fileJump"
+    },
+    "selectdown": {
+        "name": "selectdown",
+        "description": "Select down",
+        "bindKey": {
+            "win": "Shift-Down",
+            "mac": "Shift-Down|Ctrl-Shift-N"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "golinedown": {
+        "name": "golinedown",
+        "description": "Go line down",
+        "bindKey": {
+            "win": "Down",
+            "mac": "Down|Ctrl-N"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectwordleft": {
+        "name": "selectwordleft",
+        "description": "Select word left",
+        "bindKey": {
+            "win": "Ctrl-Shift-Left",
+            "mac": "Option-Shift-Left"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "gotowordleft": {
+        "name": "gotowordleft",
+        "description": "Go to word left",
+        "bindKey": {
+            "win": "Ctrl-Left",
+            "mac": "Option-Left"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selecttolinestart": {
+        "name": "selecttolinestart",
+        "description": "Select to line start",
+        "bindKey": {
+            "win": "Alt-Shift-Left",
+            "mac": "Command-Shift-Left|Ctrl-Shift-A"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "gotolinestart": {
+        "name": "gotolinestart",
+        "description": "Go to line start",
+        "bindKey": {
+            "win": "Alt-Left|Home",
+            "mac": "Command-Left|Home|Ctrl-A"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectleft": {
+        "name": "selectleft",
+        "description": "Select left",
+        "bindKey": {
+            "win": "Shift-Left",
+            "mac": "Shift-Left|Ctrl-Shift-B"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "gotoleft": {
+        "name": "gotoleft",
+        "description": "Go to left",
+        "bindKey": {
+            "win": "Left",
+            "mac": "Left|Ctrl-B"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectwordright": {
+        "name": "selectwordright",
+        "description": "Select word right",
+        "bindKey": {
+            "win": "Ctrl-Shift-Right",
+            "mac": "Option-Shift-Right"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "gotowordright": {
+        "name": "gotowordright",
+        "description": "Go to word right",
+        "bindKey": {
+            "win": "Ctrl-Right",
+            "mac": "Option-Right"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selecttolineend": {
+        "name": "selecttolineend",
+        "description": "Select to line end",
+        "bindKey": {
+            "win": "Alt-Shift-Right",
+            "mac": "Command-Shift-Right|Shift-End|Ctrl-Shift-E"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "gotolineend": {
+        "name": "gotolineend",
+        "description": "Go to line end",
+        "bindKey": {
+            "win": "Alt-Right|End",
+            "mac": "Command-Right|End|Ctrl-E"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectright": {
+        "name": "selectright",
+        "description": "Select right",
+        "bindKey": {
+            "win": "Shift-Right",
+            "mac": "Shift-Right"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "gotoright": {
+        "name": "gotoright",
+        "description": "Go to right",
+        "bindKey": {
+            "win": "Right",
+            "mac": "Right|Ctrl-F"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectpagedown": {
+        "name": "selectpagedown",
+        "description": "Select page down",
+        "bindKey": "Shift-PageDown",
+        "readOnly": true
+    },
+    "pagedown": {
+        "name": "pagedown",
+        "description": "Page down",
+        "bindKey": {
+            "win": null,
+            "mac": "Option-PageDown"
+        },
+        "readOnly": true
+    },
+    "gotopagedown": {
+        "name": "gotopagedown",
+        "description": "Go to page down",
+        "bindKey": {
+            "win": "PageDown",
+            "mac": "PageDown|Ctrl-V"
+        },
+        "readOnly": true
+    },
+    "selectpageup": {
+        "name": "selectpageup",
+        "description": "Select page up",
+        "bindKey": "Shift-PageUp",
+        "readOnly": true
+    },
+    "pageup": {
+        "name": "pageup",
+        "description": "Page up",
+        "bindKey": {
+            "win": null,
+            "mac": "Option-PageUp"
+        },
+        "readOnly": true
+    },
+    "gotopageup": {
+        "name": "gotopageup",
+        "description": "Go to page up",
+        "bindKey": "PageUp",
+        "readOnly": true
+    },
+    "scrollup": {
+        "name": "scrollup",
+        "description": "Scroll up",
+        "bindKey": {
+            "win": "Ctrl-Up",
+            "mac": null
+        },
+        "readOnly": true
+    },
+    "scrolldown": {
+        "name": "scrolldown",
+        "description": "Scroll down",
+        "bindKey": {
+            "win": "Ctrl-Down",
+            "mac": null
+        },
+        "readOnly": true
+    },
+    "selectlinestart": {
+        "name": "selectlinestart",
+        "description": "Select line start",
+        "bindKey": "Shift-Home",
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectlineend": {
+        "name": "selectlineend",
+        "description": "Select line end",
+        "bindKey": "Shift-End",
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "togglerecording": {
+        "name": "togglerecording",
+        "description": "Toggle recording",
+        "bindKey": {
+            "win": "Ctrl-Alt-E",
+            "mac": "Command-Option-E"
+        },
+        "readOnly": true
+    },
+    "replaymacro": {
+        "name": "replaymacro",
+        "description": "Replay macro",
+        "bindKey": {
+            "win": "Ctrl-Shift-E",
+            "mac": "Command-Shift-E"
+        },
+        "readOnly": true
+    },
+    "jumptomatching": {
+        "name": "jumptomatching",
+        "description": "Jump to matching",
+        "bindKey": {
+            "win": "Ctrl-\\|Ctrl-P",
+            "mac": "Command-\\"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "animate",
+        "readOnly": true
+    },
+    "selecttomatching": {
+        "name": "selecttomatching",
+        "description": "Select to matching",
+        "bindKey": {
+            "win": "Ctrl-Shift-\\|Ctrl-Shift-P",
+            "mac": "Command-Shift-\\"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "animate",
+        "readOnly": true
+    },
+    "expandToMatching": {
+        "name": "expandToMatching",
+        "description": "Expand to matching",
+        "bindKey": {
+            "win": "Ctrl-Shift-M",
+            "mac": "Ctrl-Shift-M"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "animate",
+        "readOnly": true
+    },
+    "passKeysToBrowser": {
+        "name": "passKeysToBrowser",
+        "description": "Pass keys to browser",
+        "bindKey": {
+            "win": null,
+            "mac": null
+        },
+        "passEvent": true,
+        "readOnly": true
+    },
+    "copy": {
+        "name": "copy",
+        "description": "Copy",
+        "readOnly": true
+    },
+    "cut": {
+        "name": "cut",
+        "description": "Cut",
+        "scrollIntoView": "cursor",
+        "multiSelectAction": "forEach"
+    },
+    "paste": {
+        "name": "paste",
+        "description": "Paste",
+        "scrollIntoView": "cursor"
+    },
+    "removeline": {
+        "name": "removeline",
+        "description": "Remove line",
+        "bindKey": {
+            "win": "Ctrl-D",
+            "mac": "Command-D"
+        },
+        "scrollIntoView": "cursor",
+        "multiSelectAction": "forEachLine"
+    },
+    "duplicateSelection": {
+        "name": "duplicateSelection",
+        "description": "Duplicate selection",
+        "bindKey": {
+            "win": "Ctrl-Shift-D",
+            "mac": "Command-Shift-D"
+        },
+        "scrollIntoView": "cursor",
+        "multiSelectAction": "forEach"
+    },
+    "sortlines": {
+        "name": "sortlines",
+        "description": "Sort lines",
+        "bindKey": {
+            "win": "Ctrl-Alt-S",
+            "mac": "Command-Alt-S"
+        },
+        "scrollIntoView": "selection",
+        "multiSelectAction": "forEachLine"
+    },
+    "togglecomment": {
+        "name": "togglecomment",
+        "description": "Toggle comment",
+        "bindKey": {
+            "win": "Ctrl-/",
+            "mac": "Command-/"
+        },
+        "multiSelectAction": "forEachLine",
+        "scrollIntoView": "selectionPart"
+    },
+    "toggleBlockComment": {
+        "name": "toggleBlockComment",
+        "description": "Toggle block comment",
+        "bindKey": {
+            "win": "Ctrl-Shift-/",
+            "mac": "Command-Shift-/"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "selectionPart"
+    },
+    "modifyNumberUp": {
+        "name": "modifyNumberUp",
+        "description": "Modify number up",
+        "bindKey": {
+            "win": "Ctrl-Shift-Up",
+            "mac": "Alt-Shift-Up"
+        },
+        "scrollIntoView": "cursor",
+        "multiSelectAction": "forEach"
+    },
+    "modifyNumberDown": {
+        "name": "modifyNumberDown",
+        "description": "Modify number down",
+        "bindKey": {
+            "win": "Ctrl-Shift-Down",
+            "mac": "Alt-Shift-Down"
+        },
+        "scrollIntoView": "cursor",
+        "multiSelectAction": "forEach"
+    },
+    "replace": {
+        "name": "replace",
+        "description": "Replace",
+        "bindKey": {
+            "win": "Ctrl-H",
+            "mac": "Command-Option-F"
+        }
+    },
+    "undo": {
+        "name": "undo",
+        "description": "Undo",
+        "bindKey": {
+            "win": "Ctrl-Z",
+            "mac": "Command-Z"
+        }
+    },
+    "redo": {
+        "name": "redo",
+        "description": "Redo",
+        "bindKey": {
+            "win": "Ctrl-Shift-Z|Ctrl-Y",
+            "mac": "Command-Shift-Z|Command-Y"
+        }
+    },
+    "copylinesup": {
+        "name": "copylinesup",
+        "description": "Copy lines up",
+        "bindKey": {
+            "win": "Alt-Shift-Up",
+            "mac": "Command-Option-Up"
+        },
+        "scrollIntoView": "cursor"
+    },
+    "movelinesup": {
+        "name": "movelinesup",
+        "description": "Move lines up",
+        "bindKey": {
+            "win": "Alt-Up",
+            "mac": "Option-Up"
+        },
+        "scrollIntoView": "cursor"
+    },
+    "copylinesdown": {
+        "name": "copylinesdown",
+        "description": "Copy lines down",
+        "bindKey": {
+            "win": "Alt-Shift-Down",
+            "mac": "Command-Option-Down"
+        },
+        "scrollIntoView": "cursor"
+    },
+    "movelinesdown": {
+        "name": "movelinesdown",
+        "description": "Move lines down",
+        "bindKey": {
+            "win": "Alt-Down",
+            "mac": "Option-Down"
+        },
+        "scrollIntoView": "cursor"
+    },
+    "del": {
+        "name": "del",
+        "description": "Delete",
+        "bindKey": {
+            "win": "Delete",
+            "mac": "Delete|Ctrl-D|Shift-Delete"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "backspace": {
+        "name": "backspace",
+        "description": "Backspace",
+        "bindKey": {
+            "win": "Shift-Backspace|Backspace",
+            "mac": "Ctrl-Backspace|Shift-Backspace|Backspace|Ctrl-H"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "cut_or_delete": {
+        "name": "cut_or_delete",
+        "description": "Cut or delete",
+        "bindKey": {
+            "win": "Shift-Delete",
+            "mac": null
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "removetolinestart": {
+        "name": "removetolinestart",
+        "description": "Remove to line start",
+        "bindKey": {
+            "win": "Alt-Backspace",
+            "mac": "Command-Backspace"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "removetolineend": {
+        "name": "removetolineend",
+        "description": "Remove to line end",
+        "bindKey": {
+            "win": "Alt-Delete",
+            "mac": "Ctrl-K|Command-Delete"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "removetolinestarthard": {
+        "name": "removetolinestarthard",
+        "description": "Remove to line start hard",
+        "bindKey": {
+            "win": "Ctrl-Shift-Backspace",
+            "mac": null
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "removetolineendhard": {
+        "name": "removetolineendhard",
+        "description": "Remove to line end hard",
+        "bindKey": {
+            "win": "Ctrl-Shift-Delete",
+            "mac": null
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "removewordleft": {
+        "name": "removewordleft",
+        "description": "Remove word left",
+        "bindKey": {
+            "win": "Ctrl-Backspace",
+            "mac": "Alt-Backspace|Ctrl-Alt-Backspace"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "removewordright": {
+        "name": "removewordright",
+        "description": "Remove word right",
+        "bindKey": {
+            "win": "Ctrl-Delete",
+            "mac": "Alt-Delete"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "outdent": {
+        "name": "outdent",
+        "description": "Outdent",
+        "bindKey": {
+            "win": "Shift-Tab",
+            "mac": "Shift-Tab"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "selectionPart"
+    },
+    "indent": {
+        "name": "indent",
+        "description": "Indent",
+        "bindKey": {
+            "win": "Tab",
+            "mac": "Tab"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "selectionPart"
+    },
+    "blockoutdent": {
+        "name": "blockoutdent",
+        "description": "Block outdent",
+        "bindKey": {
+            "win": "Ctrl-[",
+            "mac": "Ctrl-["
+        },
+        "multiSelectAction": "forEachLine",
+        "scrollIntoView": "selectionPart"
+    },
+    "blockindent": {
+        "name": "blockindent",
+        "description": "Block indent",
+        "bindKey": {
+            "win": "Ctrl-]",
+            "mac": "Ctrl-]"
+        },
+        "multiSelectAction": "forEachLine",
+        "scrollIntoView": "selectionPart"
+    },
+    "insertstring": {
+        "name": "insertstring",
+        "description": "Insert string",
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "inserttext": {
+        "name": "inserttext",
+        "description": "Insert text",
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "splitline": {
+        "name": "splitline",
+        "description": "Split line",
+        "bindKey": {
+            "win": null,
+            "mac": "Ctrl-O"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "transposeletters": {
+        "name": "transposeletters",
+        "description": "Transpose letters",
+        "bindKey": {
+            "win": "Alt-Shift-X",
+            "mac": "Ctrl-T"
+        },
+        "scrollIntoView": "cursor"
+    },
+    "touppercase": {
+        "name": "touppercase",
+        "description": "To uppercase",
+        "bindKey": {
+            "win": "Ctrl-U",
+            "mac": "Ctrl-U"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "tolowercase": {
+        "name": "tolowercase",
+        "description": "To lowercase",
+        "bindKey": {
+            "win": "Ctrl-Shift-U",
+            "mac": "Ctrl-Shift-U"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "autoindent": {
+        "name": "autoindent",
+        "description": "Auto Indent",
+        "bindKey": {
+            "win": null,
+            "mac": null
+        },
+        "multiSelectAction": "forEachLine",
+        "scrollIntoView": "animate"
+    },
+    "expandtoline": {
+        "name": "expandtoline",
+        "description": "Expand to line",
+        "bindKey": {
+            "win": "Ctrl-Shift-L",
+            "mac": "Command-Shift-L"
+        },
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "openlink": {
+        "name": "openlink",
+        "bindKey": {
+            "win": "Ctrl+F3",
+            "mac": "F3"
+        }
+    },
+    "joinlines": {
+        "name": "joinlines",
+        "description": "Join lines",
+        "bindKey": {
+            "win": null,
+            "mac": null
+        },
+        "multiSelectAction": "forEach",
+        "readOnly": true
+    },
+    "invertSelection": {
+        "name": "invertSelection",
+        "description": "Invert selection",
+        "bindKey": {
+            "win": null,
+            "mac": null
+        },
+        "readOnly": true,
+        "scrollIntoView": "none"
+    },
+    "addLineAfter": {
+        "name": "addLineAfter",
+        "description": "Add new line after the current line",
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "addLineBefore": {
+        "name": "addLineBefore",
+        "description": "Add new line before the current line",
+        "multiSelectAction": "forEach",
+        "scrollIntoView": "cursor"
+    },
+    "openCommandPallete": {
+        "name": "openCommandPallete",
+        "description": "Open command palette",
+        "bindKey": {
+            "win": "F1",
+            "mac": "F1"
+        },
+        "readOnly": true
+    },
+    "modeSelect": {
+        "name": "modeSelect",
+        "description": "Change language mode...",
+        "bindKey": {
+            "win": null,
+            "mac": null
+        },
+        "readOnly": true
+    },
+    "foldToLevel1": {
+        "name": "foldToLevel1",
+        "description": "Fold To Level 1",
+        "level": 1,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel2": {
+        "name": "foldToLevel2",
+        "description": "Fold To Level 2",
+        "level": 2,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel3": {
+        "name": "foldToLevel3",
+        "description": "Fold To Level 3",
+        "level": 3,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel4": {
+        "name": "foldToLevel4",
+        "description": "Fold To Level 4",
+        "level": 4,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel5": {
+        "name": "foldToLevel5",
+        "description": "Fold To Level 5",
+        "level": 5,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel6": {
+        "name": "foldToLevel6",
+        "description": "Fold To Level 6",
+        "level": 6,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel7": {
+        "name": "foldToLevel7",
+        "description": "Fold To Level 7",
+        "level": 7,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "foldToLevel8": {
+        "name": "foldToLevel8",
+        "description": "Fold To Level 8",
+        "level": 8,
+        "scrollIntoView": "center",
+        "readOnly": true
+    },
+    "addCursorAbove": {
+        "name": "addCursorAbove",
+        "description": "Add cursor above",
+        "bindKey": {
+            "win": "Ctrl-Alt-Up",
+            "mac": "Ctrl-Alt-Up"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "addCursorBelow": {
+        "name": "addCursorBelow",
+        "description": "Add cursor below",
+        "bindKey": {
+            "win": "Ctrl-Alt-Down",
+            "mac": "Ctrl-Alt-Down"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "addCursorAboveSkipCurrent": {
+        "name": "addCursorAboveSkipCurrent",
+        "description": "Add cursor above (skip current)",
+        "bindKey": {
+            "win": "Ctrl-Alt-Shift-Up",
+            "mac": "Ctrl-Alt-Shift-Up"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "addCursorBelowSkipCurrent": {
+        "name": "addCursorBelowSkipCurrent",
+        "description": "Add cursor below (skip current)",
+        "bindKey": {
+            "win": "Ctrl-Alt-Shift-Down",
+            "mac": "Ctrl-Alt-Shift-Down"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectMoreBefore": {
+        "name": "selectMoreBefore",
+        "description": "Select more before",
+        "bindKey": {
+            "win": "Ctrl-Alt-Left",
+            "mac": "Ctrl-Alt-Left"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectMoreAfter": {
+        "name": "selectMoreAfter",
+        "description": "Select more after",
+        "bindKey": {
+            "win": "Ctrl-Alt-Right",
+            "mac": "Ctrl-Alt-Right"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectNextBefore": {
+        "name": "selectNextBefore",
+        "description": "Select next before",
+        "bindKey": {
+            "win": "Ctrl-Alt-Shift-Left",
+            "mac": "Ctrl-Alt-Shift-Left"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "selectNextAfter": {
+        "name": "selectNextAfter",
+        "description": "Select next after",
+        "bindKey": {
+            "win": "Ctrl-Alt-Shift-Right",
+            "mac": "Ctrl-Alt-Shift-Right"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "toggleSplitSelectionIntoLines": {
+        "name": "toggleSplitSelectionIntoLines",
+        "description": "Split into lines",
+        "bindKey": {
+            "win": "Ctrl-Alt-L",
+            "mac": "Ctrl-Alt-L"
+        },
+        "readOnly": true
+    },
+    "splitSelectionIntoLines": {
+        "name": "splitSelectionIntoLines",
+        "description": "Split into lines",
+        "readOnly": true
+    },
+    "alignCursors": {
+        "name": "alignCursors",
+        "description": "Align cursors",
+        "bindKey": {
+            "win": "Ctrl-Alt-A",
+            "mac": "Ctrl-Alt-A"
+        },
+        "scrollIntoView": "cursor"
+    },
+    "findAll": {
+        "name": "findAll",
+        "description": "Find all",
+        "bindKey": {
+            "win": "Ctrl-Alt-K",
+            "mac": "Ctrl-Alt-G"
+        },
+        "scrollIntoView": "cursor",
+        "readOnly": true
+    },
+    "expandSnippet": {
+        "name": "expandSnippet",
+        "bindKey": "Tab"
+    },
+    "submit": {
+        "name": "submit",
+        "bindKey": {
+            "win": "Ctrl-Enter",
+            "mac": "Command-Enter"
+        }
+    },
+    "save-state": {
+        "name": "save-state",
+        "bindKey": {
+            "win": "Ctrl-Alt-S",
+            "mac": "Command-Alt-S"
+        }
+    },
+    "showKeyboardShortcuts": {
+        "name": "showKeyboardShortcuts",
+        "bindKey": {
+            "win": "Ctrl-Alt-h",
+            "mac": "Command-Alt-h"
+        }
+    }
+}

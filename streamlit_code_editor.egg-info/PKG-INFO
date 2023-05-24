@@ -1,0 +1,12 @@
+Metadata-Version: 2.1
+Name: streamlit-code-editor
+Version: 0.0.7
+Summary: React-ace editor customized for Streamlit
+Home-page: https://github.com/bouzidanas/streamlit.io/tree/dev/streamlit-code-editor
+Author: Anas Bouzid
+Author-email: anasbouzid@gmail.com
+Requires-Python: >=3.6
+Description-Content-Type: text/plain
+License-File: LICENSE
+
+React-ace component with custom themes wrapped with customizable interface elements for better integration as a Streamlit code editor

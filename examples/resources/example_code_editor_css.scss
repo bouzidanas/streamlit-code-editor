@@ -1,0 +1,63 @@
+&.streamlit_code-editor .ace_keyword {
+        color: #ff3370;
+}
+
+&.streamlit_code-editor .ace-streamlit-dark .ace_support.ace_function {
+        color: #a0de24;
+}
+
+&.streamlit_code-editor .ace-streamlit-dark .ace_string {
+        color: #fdff7e;
+}
+&.streamlit_code-editor .ace-streamlit-light .ace_support.ace_function {
+        color: #06a00c;
+}
+
+&.streamlit_code-editor .ace-streamlit-light .ace_string {
+        color: #cbcb09;
+}
+
+&.streamlit_code-editor .ace-streamlit-dark.ace_editor .ace_punctuation {
+        color: rgb(255, 255, 255);
+}
+
+&.streamlit_code-editor .ace-streamlit-dark .ace_constant.ace_numeric {
+        color: #ae81ff;
+}
+&.streamlit_code-editor .ace-streamlit-light .ace_constant.ace_numeric {
+        color: #ab42e0;
+}
+
+&.streamlit_code-editor .ace-streamlit-dark.ace_editor {
+        background-color: #111827;
+        color: rgb(255, 255, 255);
+        font-weight: 500;
+}
+
+&.streamlit_code-editor .ace-streamlit-dark .ace_comment {
+        color: #687282;
+}
+
+&.streamlit_code-editor .ace-streamlit-dark .ace_paren {
+        color: rgb(255, 255, 255);
+}
+&.streamlit_code-editor .ace-streamlit-light .ace_paren {
+        color: rgb(0, 0, 0);
+}
+
+&.streamlit_code-editor .ace-streamlit-light.ace_editor {
+        background-color: #ffffff;
+        color: rgb(0, 0, 0);
+        font-weight: 600;
+}
+
+&.streamlit_code-editor .ace-streamlit-light .ace_paren {
+        color: rgb(0, 0, 0);
+}
+
+&.streamlit_code-editor .ace-streamlit-dark .ace_keyword.ace_operator {
+        color: rgb(255, 163, 65);
+}
+&.streamlit_code-editor .ace-streamlit-light .ace_keyword.ace_operator {
+        color: rgb(225, 128, 1);
+}
