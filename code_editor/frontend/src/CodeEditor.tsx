@@ -125,6 +125,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
   const infoTextRef = useRef<HTMLSpanElement>(null);
   const baseSession = useRef<ace.Ace.EditSession | null>(null);
   const keepFocus = useRef<boolean>(false);
+  const reset = useRef<boolean>(false);
 
   var timeoutId: NodeJS.Timeout;
 
@@ -171,7 +172,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
   //   2. to set the focus on the editor after rendering the component at which point, the 
   //      editor should be ready.
   useEffect(() => {
-    if(aceEditor.current && args['focus']){
+    if(aceEditor.current && args.focus){
       aceEditor.current.editor.focus();
     }
   }, [args.focus]);
@@ -499,6 +500,18 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
     divElem ? resizeObserver.observe(divElem as HTMLDivElement) : resizeObserver.disconnect();
   }
 
+  // This useEffect is used to reset the editor when the code argument changes and
+  // the allow_reset argument is true. The allow_reset argument only impacts the
+  // behavior of the component when the component has a fixed key argument because
+  // changing the key argument results in the creation of a new component instance.
+  // Everything would be reset anyways.
+  useEffect(() => {
+    if (args['allow_reset'] === true && args['code'] !== code) {
+      reset.current = !reset.current;
+      resetEditor();
+    }
+  }, [args['code']]);
+
   /**
    * This could also be memoized but I don't think it would be necessary because its not expensive.
    */
@@ -521,7 +534,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
   const themeProp = themeChoice();
   const componentContainerProps = args["component_props"];
 
-  const {info: infoArg, menu: menuArg, focus: focusArg, ...rest} = args;
+  const {info: infoArg, menu: menuArg, focus: focusArg, code: codeArg, ...rest} = args;
   const editorArgsString = JSON.stringify(rest);
   const menuArgsString = JSON.stringify(menuArg);
   const infoArgsString = JSON.stringify(infoArg);
@@ -584,7 +597,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
          props={aceProps} 
          onChange={(value) => onChangeHandler(value)} />
       );
-  }, [editorArgsString, themeProp, snippets, keybindingAddRemove]);
+  }, [editorArgsString, themeProp, snippets, keybindingAddRemove, reset.current]);
 
   const buttons = useMemo(() => {
     const revertedButtons = JSON.parse(buttonArgsString);
