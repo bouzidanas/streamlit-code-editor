@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 # the component, and True when we're ready to package and distribute it.
 # (This is, of course, optional - there are innumerable ways to manage your
 # release process.)
-_RELEASE = True
+_RELEASE = False
 
 # Declare a Streamlit component. `declare_component` returns a function
 # that is used to create instances of the component. We're naming this
@@ -172,7 +172,7 @@ if not _RELEASE:
     ace_props = {"style": {"borderRadius": "0px 0px 8px 8px"}}
 
     input = st.text_area("Input:", demo_sample_python_code, height=200)
-    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": wrap}, allow_reset=True, key="code_editor_demo")
+    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": False}, allow_reset=True, key="code_editor_demo")
 
     if response_dict['type'] == "submit" and len(response_dict['text']) != 0:
         st.write("Response type: ", response_dict['type'])
