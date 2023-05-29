@@ -1,5 +1,6 @@
 import os
 import json
+import streamlit as st
 import streamlit.components.v1 as components
 
 # Create a _RELEASE constant. We'll set this to False while we're developing
@@ -80,8 +81,6 @@ def code_editor(code, lang='python', theme="default", shortcuts="vscode", height
 # During development, we can run this just as we would any other Streamlit
 # app: `$ streamlit run code_editor/__init__.py`
 if not _RELEASE:
-    import json
-    import streamlit as st
 
     with open('../examples/resources/example_custom_buttons_bar_alt.json') as json_button_file_alt:
         custom_buttons_alt = json.load(json_button_file_alt)
@@ -178,6 +177,6 @@ if not _RELEASE:
     if response_dict['type'] == "submit" and len(response_dict['text']) != 0:
         st.write("Response type: ", response_dict['type'])
         st.code(response_dict['text'], language=response_dict['lang'])
-
-    st.write("### Code Editor Props:")
+    st.write("### Code Editor:")
+    st.code(input, language=language)
     # st.write("You can find more examples in the [docs]()")

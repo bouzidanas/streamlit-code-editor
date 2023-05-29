@@ -451,9 +451,9 @@ code_editor/frontend/build/fe10bf958ca84418c6af95259c7b4260.js
 code_editor/frontend/build/fe64d890e7fa0c0beae6f2e7a96a7ede.js
 code_editor/frontend/build/ff8b71b1bce6feb81065d8340e07dfeb.js
 code_editor/frontend/build/index.html
-code_editor/frontend/build/static/js/2.7bb38f95.chunk.js
-code_editor/frontend/build/static/js/2.7bb38f95.chunk.js.LICENSE.txt
-code_editor/frontend/build/static/js/2.7bb38f95.chunk.js.map
+code_editor/frontend/build/static/js/2.9fecefdf.chunk.js
+code_editor/frontend/build/static/js/2.9fecefdf.chunk.js.LICENSE.txt
+code_editor/frontend/build/static/js/2.9fecefdf.chunk.js.map
 code_editor/frontend/build/static/js/main.571a6b52.chunk.js
 code_editor/frontend/build/static/js/main.571a6b52.chunk.js.map
 code_editor/frontend/build/static/js/runtime-main.ad47a231.js
