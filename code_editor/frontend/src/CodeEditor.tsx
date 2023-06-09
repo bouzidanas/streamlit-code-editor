@@ -73,10 +73,6 @@ const GlobalCSS = createGlobalStyle<{isDisabled?: boolean, inject: string}>`
     cursor: ${props => props.isDisabled? "not-allowed": "auto"};
     pointer-events: ${props => props.isDisabled? "none": "auto"};
   }
-  body {
-    margin: 0;
-    padding: 0;
-  }
   ${props => props.inject}
 `
 const StyledCodeEditor = styled.div`
@@ -190,7 +186,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' }, //key combination used for the command.
       exec: (editor: any) => {
         const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({text: editor.getValue(), type: "submit", lang: outgoingMode });
+        Streamlit.setComponentValue({text: editor.getValue(), type: "submit", lang: outgoingMode, cursor: editor.getCursorPosition()});
       }
     },
     {
@@ -295,7 +291,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       description: "Send custom response", //description of the command
       exec: (editor: any, responseType = "") => {
         const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({ text: code, type: responseType, lang: outgoingMode });
+        Streamlit.setComponentValue({ text: editor.getValue(), type: responseType, lang: outgoingMode, cursor: editor.getCursorPosition()});
       }
     },
     {
@@ -561,6 +557,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       revertedArgs['buttons'].forEach((button: any) => {
           commands.commands = [...commands.commands, {
             name: (button.name as string).trim().replace(/\s+/g, '_') + '_button',
+            bindKey: button.bindKey,
             description: "Execute '" + button.name + "' button command(s)",
             exec: () => {
             executeAll(button.commands);

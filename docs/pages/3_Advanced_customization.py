@@ -41,18 +41,18 @@ st.markdown(html_style_string, unsafe_allow_html=True)
 # Opening JSON file
 # You can also just use a dictionary but with files (JSON or text for example),
 # its easier to transfer or use in multiple projects
-with open('streamlit-code-editor/docs/pages/resources/example_custom_buttons_bar_adj.json') as json_button_file:
+with open('./pages/resources/example_custom_buttons_bar_adj.json') as json_button_file:
     custom_buttons_alt = json.load(json_button_file)
 
-with open('streamlit-code-editor/docs/pages/resources/example_custom_buttons_set.json') as json_button_file:
+with open('./pages/resources/example_custom_buttons_set.json') as json_button_file:
     custom_buttons = json.load(json_button_file)
 
 # Load Info bar CSS from JSON file
-with open('streamlit-code-editor/docs/pages/resources/example_info_bar.json') as json_info_file:
+with open('./pages/resources/example_info_bar.json') as json_info_file:
     info_bar = json.load(json_info_file)
 
 # Load Code Editor CSS from file
-with open('streamlit-code-editor/docs/pages/resources/code_editor.scss') as css_file:
+with open('./pages/resources/code_editor.scss') as css_file:
     css_text = css_file.read()
 
 col1, col2 = st.columns([6,2])
@@ -61,7 +61,7 @@ with col1:
     st.markdown("In the previous section, there is an issue with the appearance of the info and menu bar examples. The top two corners of the editor component are rounded which does not allow for a seemless connection of the left and right edges with the edges of the info/menu bar. On top of this, you might want the bars to appear on the bottom or even on the sides of the editor instead of on top. This is where `css` and `style` attributes really come in to play. ")
     st.markdown("To get a better understanding of how to use these attributes, we need to go over the layout of the Code Editor component.")
     st.markdown("### Code Editor component layout")
-    st.image("streamlit-code-editor/docs/pages/resources/code_editor_layout.png")
+    st.image("./pages/resources/code_editor_layout.png")
     st.markdown('On the left (in the diagram) is the layout of the Code Editor component in the HTML/DOM. As you can see, it is relatively flat. On the right is the physical layout of the Code Editor component in the Streamlit app. Here, there are somethings to note. By default, the Code Editor component has its CSS `display` property set to "flex" and its `flex-direction` property set to "column". This means that Code Editor will stack its inner components on top of one another in a column. Additionally, the Ace Editor component has its CSS `order` property set to "3". Altogether, this provides a default setup that allows for easy rearrangment of the stacking order of the components inside the Code Editor. For example, setting the `order` property of the info bar component to a value less than 3 will put it above the Ace Editor like in the examples in the previous section. Setting it to 3 or greater will put the info bar below.')
     st.markdown('''Custom buttons are not positioned like the Ace Editor, info bar, and menu bar components are. By default, they have their CSS `position` property set to "absolute" which makes it easier to position them anywhere within the iframe/document that contains the Code Editor component. ''')
 

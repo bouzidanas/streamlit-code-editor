@@ -28,6 +28,7 @@ export interface customButton {
   alwaysOn?: boolean,
   commands?: any[],
   toggledCommands?: any[],
+  bindKey?: string | object,
   class?: string,
   style?: object,
   theme?: object, 

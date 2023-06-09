@@ -454,8 +454,8 @@ code_editor/frontend/build/index.html
 code_editor/frontend/build/static/js/2.2eaf9c7f.chunk.js
 code_editor/frontend/build/static/js/2.2eaf9c7f.chunk.js.LICENSE.txt
 code_editor/frontend/build/static/js/2.2eaf9c7f.chunk.js.map
-code_editor/frontend/build/static/js/main.571a6b52.chunk.js
-code_editor/frontend/build/static/js/main.571a6b52.chunk.js.map
+code_editor/frontend/build/static/js/main.830bcf97.chunk.js
+code_editor/frontend/build/static/js/main.830bcf97.chunk.js.map
 code_editor/frontend/build/static/js/runtime-main.ad47a231.js
 code_editor/frontend/build/static/js/runtime-main.ad47a231.js.map
 streamlit_code_editor.egg-info/PKG-INFO

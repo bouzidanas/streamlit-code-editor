@@ -350,6 +350,21 @@ table_html_string = '''<table class="full-width doc">
                 </div>
             </td>
         </tr>
+         <tr >
+            <td >
+                <div>
+                    <p class="">
+                        <span class="bold">allow_reset</span>
+                        <span class="italic code">(bool)</span>
+                    </p>
+                </div> 
+            </td>
+            <td >
+                <div>
+                    <p>Allows changes in the string passed to the `code` argument to be reflected in the code editor <strong>when</strong> the `key` is set to something thats fixed. Note that changes to the content inside the editor since the last communication back to streamlit might be lost.</p>
+                </div>
+            </td>
+        </tr>
         <tr >
             <td >
                 <div>

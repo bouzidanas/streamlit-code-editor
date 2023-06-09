@@ -41,18 +41,18 @@ st.markdown(html_style_string, unsafe_allow_html=True)
 # Opening JSON file
 # You can also just use a dictionary but with files (JSON or text for example),
 # its easier to transfer or use in multiple projects
-with open('streamlit-code-editor/docs/pages/resources/example_custom_buttons_bar_adj.json') as json_button_file:
+with open('./pages/resources/example_custom_buttons_bar_adj.json') as json_button_file:
     custom_buttons_alt = json.load(json_button_file)
 
-with open('streamlit-code-editor/docs/pages/resources/example_custom_buttons_set.json') as json_button_file:
+with open('./pages/resources/example_custom_buttons_set.json') as json_button_file:
     custom_buttons = json.load(json_button_file)
 
 # Load Info bar CSS from JSON file
-with open('streamlit-code-editor/docs/pages/resources/example_info_bar.json') as json_info_file:
+with open('./pages/resources/example_info_bar.json') as json_info_file:
     info_bar = json.load(json_info_file)
 
 # Load Code Editor CSS from file
-with open('streamlit-code-editor/docs/pages/resources/code_editor.scss') as css_file:
+with open('./pages/resources/code_editor.scss') as css_file:
     css_text = css_file.read()
 
 col1, col2 = st.columns([6,2])
@@ -178,20 +178,21 @@ with col1:
     st.success("**Tip:** For better reusability, you can store the buttons in a file (like a JSON file) and then load the buttons from the file. This way, you can easily reuse buttons you have created for one Streamlit app in another. A side benefit is that you can change the buttons without having to change the code.")
     st.markdown("For reference, here is the list of button attributes:")
 
-    btn_attr_dict = '''{
-  "name":            ,# string (required) 
-  "feather":         ,# string
-  "iconSize":        ,# integer number
-  "primary":         ,# boolean
-  "hasText":         ,# boolean
-  "showWithIcon":    ,# boolean
-  "alwaysOn":        ,# boolean 
-  "style":           ,# dictionary
-  "theme":           ,# dictionary 
-  "class":           ,# string
-  "classToggle":     ,# string
-  "commands":        ,# list
-  "toggledCommands": ,# list
+    btn_attr_dict = r'''{
+  "name":           ,# string (required) 
+  "feather":        ,# string
+  "iconSize":       ,# integer number
+  "primary":        ,# boolean
+  "hasText":        ,# boolean
+  "showWithIcon":   ,# boolean
+  "alwaysOn":       ,# boolean 
+  "style":          ,# dictionary
+  "theme":          ,# dictionary 
+  "class":          ,# string
+  "classToggle":    ,# string
+  "commands":       ,# list
+  "toggledCommands":,# list
+  "bindKey":        ,# {win: string, mac: string}
 }'''
     st.code(btn_attr_dict, language="python")
 
