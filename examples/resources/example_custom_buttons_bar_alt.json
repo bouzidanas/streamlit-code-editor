@@ -25,7 +25,7 @@
     "name": "Collapse",
     "feather": "Minimize2",
     "hasText": true,
-    "commands": ["selectall", "toggleSplitSelectionIntoLines","gotolinestart","gotolinestart", "backspace"],
+    "commands": ["selectall", "toggleSplitSelectionIntoLines", "gotolineend", "del"],
     "style": {"bottom": "calc(50% - 1.25rem)", "right": "0.4rem"}
   },
   {

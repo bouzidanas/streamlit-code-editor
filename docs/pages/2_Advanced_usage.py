@@ -139,10 +139,9 @@ with col1:
    "feather": "Minimize2",
    "hasText": True,
    "commands": ["selectall",
-                "toggleSplitSelectionIntoLines",
-                "gotolinestart",
-                "gotolinestart",
-                "backspace"],
+      "toggleSplitSelectionIntoLines",
+      "gotolineend",
+      "del"],
    "style": {"bottom": "calc(50% - 1.25rem)", "right": "0.4rem"}
  },
  {
