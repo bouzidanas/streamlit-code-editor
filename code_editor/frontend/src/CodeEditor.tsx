@@ -429,6 +429,22 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
           }
         }
       }
+    },
+    {
+      name: 'delayedExecute', //name for the key binding.
+      description: "Execute command after a period of time", //description of the command
+      exec: (editor: any, args: { command: string | any[], timeout?: number}) => {
+        if(args.command){
+          if(Array.isArray(args.command) && args.command.length === 2){
+            typeof args.command[0] === "string" ? setTimeout(() => {execute(args.command[0], args.command[1])}, args.timeout ?? defaultProps.debounceChangePeriod) : console.warn("Editor command - conditionalExecute: improper command format! Command array must contain name of command as first element and arguments as second element.");
+          }
+          else if(typeof args.command === "string"){
+            setTimeout(() => {
+              execute(args.command as string);
+            }, args.timeout ?? defaultProps.debounceChangePeriod);
+          }
+        }
+      }
     }
   ]};
 

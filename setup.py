@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="streamlit-code-editor",
-    version="0.1.5",
+    version="0.1.6",
     author="Anas Bouzid",
     author_email="anasbouzid@gmail.com",
     description="React-ace editor customized for Streamlit",
