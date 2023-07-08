@@ -70,7 +70,7 @@ def code_editor(code, lang='python', theme="default", shortcuts="vscode", height
     #
     # "default" is a special argument that specifies the initial return
     # value of the component before the user has interacted with it.
-    component_value = _component_func(code=code, lang=lang, theme=theme, key=key, height=height, focus=focus, shortcuts=shortcuts, snippets=snippets, keybindings=keybindings, buttons=buttons, options=options, props=props, editor_props=editor_props, component_props=component_props, menu=menu, info=info, allow_reset=allow_reset, default={"type": "", "text": "", "lang": "", "cursor": ""})
+    component_value = _component_func(code=code, lang=lang, theme=theme, key=key, height=height, focus=focus, shortcuts=shortcuts, snippets=snippets, keybindings=keybindings, buttons=buttons, options=options, props=props, editor_props=editor_props, component_props=component_props, menu=menu, info=info, allow_reset=allow_reset, default={"id": "", "type": "", "text": "", "lang": "", "cursor": ""})
 
     # We could modify the value returned from the component if we wanted.
     # There's no need to do this in our simple example - but it's an option.
@@ -173,6 +173,8 @@ if not _RELEASE:
 
     input = st.text_area("Input:", demo_sample_python_code, height=200)
     response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": False}, allow_reset=True, key="code_editor_demo")
+
+    st.write(response_dict)
 
     if response_dict['type'] == "submit" and len(response_dict['text']) != 0:
         st.write("Response type: ", response_dict['type'])

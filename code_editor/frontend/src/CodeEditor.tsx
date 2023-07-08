@@ -4,6 +4,7 @@ import {
   ComponentProps,
   Theme,
 } from "streamlit-component-lib"
+import {v1} from 'uuid';
 import styled, { createGlobalStyle } from "styled-components/macro"
 import { useState, useRef, useEffect, useMemo } from "react"
 import AceEditor from "react-ace";
@@ -186,7 +187,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' }, //key combination used for the command.
       exec: (editor: any) => {
         const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({text: editor.getValue(), type: "submit", lang: outgoingMode, cursor: editor.getCursorPosition()});
+        Streamlit.setComponentValue({id: v1().slice(0,8), type: "submit", text: editor.getValue(), lang: outgoingMode, cursor: editor.getCursorPosition()});
       }
     },
     {
@@ -291,7 +292,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       description: "Send custom response", //description of the command
       exec: (editor: any, responseType = "") => {
         const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({ text: editor.getValue(), type: responseType, lang: outgoingMode, cursor: editor.getCursorPosition()});
+        Streamlit.setComponentValue({id: v1().slice(0,8), type: responseType, text: editor.getValue(), lang: outgoingMode, cursor: editor.getCursorPosition()});
       }
     },
     {
