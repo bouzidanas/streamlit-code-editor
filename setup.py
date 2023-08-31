@@ -11,7 +11,7 @@ setuptools.setup(
     author_email="anasbouzid@gmail.com",
     description="React-ace editor customized for Streamlit",
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
     url="https://github.com/bouzidanas/streamlit-code-editor",
     packages=setuptools.find_packages(),
     include_package_data=True,
