@@ -1,4 +1,8 @@
 import setuptools
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="streamlit-code-editor",
@@ -6,8 +10,8 @@ setuptools.setup(
     author="Anas Bouzid",
     author_email="anasbouzid@gmail.com",
     description="React-ace editor customized for Streamlit",
-    long_description="React-ace component with custom themes wrapped with customizable interface elements for better integration as a Streamlit code editor",
-    long_description_content_type="text/plain",
+    long_description=long_description,
+    long_description_content_type='text/markdown'
     url="https://github.com/bouzidanas/streamlit-code-editor",
     packages=setuptools.find_packages(),
     include_package_data=True,
