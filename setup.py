@@ -2,7 +2,8 @@ import setuptools
 from pathlib import Path
 
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+long_description = (this_directory / "PROJECT.md").read_text()
+
 
 setuptools.setup(
     name="streamlit-code-editor",
