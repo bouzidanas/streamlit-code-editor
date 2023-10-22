@@ -92,8 +92,7 @@ st.write("### Output:")
 ace_props = {"style": {"borderRadius": "0px 0px 8px 8px"}}
 response_dict = code_editor(demo_sample_python_code,  height = height, lang=language, theme=theme, shortcuts=shortcuts, focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": wrap})
 
-if response_dict['type'] == "submit" and len(response_dict['text']) != 0:
-    st.write("Response type: ", response_dict['type'])
-    st.code(response_dict['text'], language=response_dict['lang'])
+if response_dict['type'] == "submit" and len(response_dict['id']) != 0:
+    st.write(response_dict)
 
 # st.write("You can find more examples in the [docs]()")
