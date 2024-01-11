@@ -182,3 +182,6 @@ if not _RELEASE:
     st.write("### Code Editor:")
     st.code(input, language=language)
     # st.write("You can find more examples in the [docs]()")
+
+    new_response = code_editor("print('Hello World!')", lang="python", height = 22, buttons=btn_settings_editor_btns, options={"wrap": False}, allow_reset=True, key="code_editor3")
+    st.write(new_response)
