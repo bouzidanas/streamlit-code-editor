@@ -296,6 +296,14 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       }
     },
     {
+      name: 'returnSelection', //name for the key binding.
+      description: "Send selected text to Streamlit", //description of the command
+      exec: (editor: any) => {
+        const outgoingMode = editor.getSession().$modeId.split("/").pop();
+        Streamlit.setComponentValue({id: v1().slice(0,8), type: "selection", text: editor.getSelectedText(), lang: outgoingMode, cursor: editor.getCursorPosition()});
+      }
+    },
+    {
       name: 'editSnippets',
       description: "Edit snippets",
       bindKey: { win: 'Ctrl-Alt-M', mac: 'Command-Alt-M' },
