@@ -7,7 +7,7 @@ long_description = (this_directory / "PROJECT.md").read_text()
 
 setuptools.setup(
     name="streamlit-code-editor",
-    version="0.1.10",
+    version="0.1.12",
     author="Anas Bouzid",
     author_email="anasbouzid@gmail.com",
     description="React-ace editor customized for Streamlit",
