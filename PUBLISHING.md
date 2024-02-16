@@ -1,4 +1,4 @@
-# Publishing instructions
+# Publishing instructions for author and collaborators
 
 1. Go to `/code_editor/frontend` directory
 2. Update the version in `package.json`
