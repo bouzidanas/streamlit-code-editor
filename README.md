@@ -28,13 +28,10 @@ Without specifying a language, the editor will default to `python`. You can also
 response_dict = code_editor(your_code_string, lang="javascript")
 ```
 By default, each code editor is styled like streamlit's code component. We will go over how to customize the styling in a later section.
-## Docs 
-[![Component Guide](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://code-editor-documentation.streamlit.app/)
+## Docs [![Component Guide](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://code-editor-documentation.streamlit.app/)
 ![guide](./examples/resources/guide_screenshot.png)
 
-## Demo
-
-[![Component Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bouzidanas-streamlit-i-streamlit-code-editorexamplesdemo-lq20k3.streamlit.app/)
+## Demo [![Component Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bouzidanas-streamlit-i-streamlit-code-editorexamplesdemo-lq20k3.streamlit.app/)
 
 ![demo](./examples/resources/streamlit-demo.gif)
 
