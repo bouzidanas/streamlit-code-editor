@@ -1,6 +1,6 @@
 {
 	"name": "streamlit-code-editor",
-	"version": "0.1.12",
+	"version": "0.1.14",
 	"private": true,
 	"dependencies": {
 		"@types/jest": "^24.0.0",

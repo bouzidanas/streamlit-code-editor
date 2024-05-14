@@ -46,7 +46,7 @@ else:
 # `declare_component` and call it done. The wrapper allows us to customize
 # our component's API: we can pre-process its input args, post-process its
 # output value, and add a docstring for users.
-def code_editor(code, lang='python', theme="default", shortcuts="vscode", height=30, focus=False, allow_reset=False, snippets=["", ""], keybindings={}, buttons=[], menu={}, info={}, options={}, props={}, editor_props={}, component_props={}, key=None):
+def code_editor(code, lang='python', theme="default", shortcuts="vscode", height=30, focus=False, allow_reset=False, response_mode="default", snippets=["", ""], keybindings={}, buttons=[], menu={}, info={}, options={}, props={}, editor_props={}, component_props={}, key=None):
     """Create a new instance of "code_editor".
 
     Parameters
@@ -70,7 +70,7 @@ def code_editor(code, lang='python', theme="default", shortcuts="vscode", height
     #
     # "default" is a special argument that specifies the initial return
     # value of the component before the user has interacted with it.
-    component_value = _component_func(code=code, lang=lang, theme=theme, key=key, height=height, focus=focus, shortcuts=shortcuts, snippets=snippets, keybindings=keybindings, buttons=buttons, options=options, props=props, editor_props=editor_props, component_props=component_props, menu=menu, info=info, allow_reset=allow_reset, default={"id": "", "type": "", "text": "", "lang": "", "cursor": ""})
+    component_value = _component_func(code=code, lang=lang, theme=theme, key=key, height=height, focus=focus, shortcuts=shortcuts, snippets=snippets, keybindings=keybindings, buttons=buttons, options=options, props=props, editor_props=editor_props, component_props=component_props, menu=menu, info=info, allow_reset=allow_reset, response_mode=response_mode, default={"id": "", "type": "", "lang": "", "text": "", "selected": "", "cursor": ""})
 
     # We could modify the value returned from the component if we wanted.
     # There's no need to do this in our simple example - but it's an option.
@@ -172,7 +172,7 @@ if not _RELEASE:
     ace_props = {"style": {"borderRadius": "0px 0px 8px 8px"}}
 
     input = st.text_area("Input:", demo_sample_python_code, height=200)
-    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": False}, allow_reset=True, key="code_editor_demo")
+    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": False}, allow_reset=True, response_mode=["debounce", "blur", "select"], key="code_editor_demo")
 
     st.write(response_dict)
 

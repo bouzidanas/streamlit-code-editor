@@ -19,7 +19,6 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/ext-prompt";
 import "ace-builds/src-noconflict/ext-modelist";
-import { edit } from './streamlit-ace-build/ace';
 
 interface CodeEditorProps extends ComponentProps {
   args: any

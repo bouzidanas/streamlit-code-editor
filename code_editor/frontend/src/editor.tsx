@@ -1,4 +1,4 @@
-import { useEffect} from "react"
+import { useEffect, useRef} from "react"
 import AceEditor from "react-ace";
 import ace from "ace-builds";
 
@@ -38,6 +38,7 @@ export type EditorProps = {
   
 export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, keybindingString, editorRef, code, onChange, onSelectionChange, onBlur }: EditorProps ) => {
     
+  let commandsList = useRef<object[]>(commands);
   useEffect(() => {
     if(editorRef.current){
 
@@ -52,7 +53,7 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
                 const newCommand = {...editorRef.current.editor.commands.commands[binding.name]};
                 newCommand.bindKey = binding.bindkey;
                 editorRef.current.editor.commands.addCommand(newCommand);
-                commands= [...commands, newCommand];
+                commandsList.current= [...commandsList.current, newCommand];
               }
             }
    
@@ -93,7 +94,7 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
            theme={theme}
            value={code}
            keyboardHandler={shortcuts}
-           commands={commands}
+           commands={commandsList.current}
            onChange={onChange}
            onSelectionChange={onSelectionChange}
            onBlur={onBlur}
