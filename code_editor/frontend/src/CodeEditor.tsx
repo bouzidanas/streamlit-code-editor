@@ -19,6 +19,7 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/ext-prompt";
 import "ace-builds/src-noconflict/ext-modelist";
+import { edit } from './streamlit-ace-build/ace';
 
 interface CodeEditorProps extends ComponentProps {
   args: any
@@ -176,6 +177,31 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
 
   const onChangeHandler = (newCode: string) => {
     setCode(newCode);
+
+    const responseMode = typeof args["response_mode"] === "string" ? [args["response_mode"]] : args["response_mode"];
+    if (responseMode.includes("debounce") && aceEditor.current && aceEditor.current.editor) {
+      const editor = aceEditor.current.editor as any;
+      const outgoingMode = editor.getSession().$modeId.split("/").pop();
+      Streamlit.setComponentValue({id: v1().slice(0,8), type: "change", lang: outgoingMode, text: newCode, selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
+    }
+  }
+  
+  const onSelectionChangeHandler = (selectedText: any) => {
+    const responseMode = typeof args["response_mode"] === "string" ? [args["response_mode"]] : args["response_mode"];
+    if (responseMode.includes("select") && aceEditor.current && aceEditor.current.editor) {
+      const editor = aceEditor.current.editor as any;
+      const outgoingMode = editor.getSession().$modeId.split("/").pop();
+      Streamlit.setComponentValue({id: v1().slice(0,8), type: "selection", lang: outgoingMode, text: code, selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
+    }
+  }
+
+  const onEditorBlur = (event: any, editor: any) => {
+    const responseMode = typeof args["response_mode"] === "string" ? [args["response_mode"]] : args["response_mode"];
+    if (responseMode.includes("blur") && editor) {
+      const outgoingMode = editor.getSession().$modeId.split("/").pop();
+      setCode(editor.getValue());
+      Streamlit.setComponentValue({id: v1().slice(0,8), type: "blur", lang: outgoingMode, text: editor.getValue(), selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
+    }
   }
 
   // commands is an array of objects containing functions
@@ -187,7 +213,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' }, //key combination used for the command.
       exec: (editor: any) => {
         const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({id: v1().slice(0,8), type: "submit", text: editor.getValue(), lang: outgoingMode, cursor: editor.getCursorPosition()});
+        Streamlit.setComponentValue({id: v1().slice(0,8), type: "submit", lang: outgoingMode, text: editor.getValue(), selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
       }
     },
     {
@@ -292,17 +318,17 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       description: "Send custom response", //description of the command
       exec: (editor: any, responseType = "") => {
         const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({id: v1().slice(0,8), type: responseType, text: editor.getValue(), lang: outgoingMode, cursor: editor.getCursorPosition()});
+        Streamlit.setComponentValue({id: v1().slice(0,8), type: responseType, lang: outgoingMode, text: editor.getValue(), selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
       }
     },
-    {
-      name: 'returnSelection', //name for the key binding.
-      description: "Send selected text to Streamlit", //description of the command
-      exec: (editor: any) => {
-        const outgoingMode = editor.getSession().$modeId.split("/").pop();
-        Streamlit.setComponentValue({id: v1().slice(0,8), type: "selection", text: editor.getSelectedText(), lang: outgoingMode, cursor: editor.getCursorPosition()});
-      }
-    },
+    // {
+    //   name: 'returnSelection', //name for the key binding.
+    //   description: "Send selected text to Streamlit", //description of the command
+    //   exec: (editor: any) => {
+    //     const outgoingMode = editor.getSession().$modeId.split("/").pop();
+    //     Streamlit.setComponentValue({id: v1().slice(0,8), type: "selection", lang: outgoingMode, text: editor.getSelectedText(), cursor: editor.getCursorPosition()});
+    //   }
+    // },
     {
       name: 'editSnippets',
       description: "Edit snippets",
@@ -617,7 +643,10 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
          commands={commands.commands} 
          keybindingString={keybindings} 
          props={aceProps} 
-         onChange={(value) => onChangeHandler(value)} />
+         onChange={onChangeHandler}
+         onSelectionChange={onSelectionChangeHandler}
+         onBlur={onEditorBlur}  
+        />
       );
   }, [editorArgsString, themeProp, snippets, keybindingAddRemove, reset.current]);
 

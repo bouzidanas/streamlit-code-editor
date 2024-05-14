@@ -31,10 +31,12 @@ export type EditorProps = {
     snippetString: string,
     commands: object[],
     keybindingString: string,
-    onChange: (value: string, event?: any) => void 
+    onChange: (value: string, event?: any) => void,
+    onSelectionChange: (value: any, event?: any) => void,
+    onBlur: (event: any, editor?: any) => void
   }
   
-export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, keybindingString, editorRef, code, onChange }: EditorProps ) => {
+export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, keybindingString, editorRef, code, onChange, onSelectionChange, onBlur }: EditorProps ) => {
     
   useEffect(() => {
     if(editorRef.current){
@@ -93,6 +95,8 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
            keyboardHandler={shortcuts}
            commands={commands}
            onChange={onChange}
+           onSelectionChange={onSelectionChange}
+           onBlur={onBlur}
            {...props}/>
   );
 };
