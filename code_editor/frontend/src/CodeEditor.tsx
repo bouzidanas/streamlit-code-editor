@@ -320,18 +320,18 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
         Streamlit.setComponentValue({id: v1().slice(0,8), type: responseType, lang: outgoingMode, text: editor.getValue(), selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
       }
     },
-    // {
-    //   name: 'returnSelection', //name for the key binding.
-    //   description: "Send selected text to Streamlit", //description of the command
-    //   exec: (editor: any) => {
-    //     const outgoingMode = editor.getSession().$modeId.split("/").pop();
-    //     Streamlit.setComponentValue({id: v1().slice(0,8), type: "selection", lang: outgoingMode, text: editor.getSelectedText(), cursor: editor.getCursorPosition()});
-    //   }
-    // },
+    {
+      name: 'returnSelection', //name for the key binding.
+      description: "Send selected text to Streamlit", //description of the command
+      exec: (editor: any) => {
+        const outgoingMode = editor.getSession().$modeId.split("/").pop();
+        Streamlit.setComponentValue({id: v1().slice(0,8), type: "selection", lang: outgoingMode, text: editor.getSelectedText(), cursor: editor.getCursorPosition()});
+      }
+    },
     {
       name: 'editSnippets',
       description: "Edit snippets",
-      bindKey: { win: 'Ctrl-Alt-M', mac: 'Command-Alt-M' },
+      bindKey: { win: 'Ctrl-Alt-N', mac: 'Command-Alt-M' },
       exec: (editor: any) => {
         const snippetManager = ace.require('ace/snippets').snippetManager;
         if(baseSession.current){
