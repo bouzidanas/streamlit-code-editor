@@ -331,7 +331,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
     {
       name: 'editSnippets',
       description: "Edit snippets",
-      bindKey: { win: 'Ctrl-Alt-N', mac: 'Command-Alt-M' },
+      bindKey: { win: 'Ctrl-Alt-N', mac: 'Command-Alt-N' },
       exec: (editor: any) => {
         const snippetManager = ace.require('ace/snippets').snippetManager;
         if(baseSession.current){
@@ -623,7 +623,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
     else if(Array.isArray(revertedArgs['height']) && revertedArgs['height'].length === 2) 
       heightProps = {minLines: revertedArgs['height'][0], maxLines: revertedArgs['height'][1]};
 
-    const aceEditorProps = { ...defaultEditorProps, ...revertedArgs['editorProps'] };
+    const aceEditorProps = { ...defaultEditorProps, ...revertedArgs['editor_props'] };
     const aceOptions = { ...defaultOptions, ...revertedArgs['options'] };
     const partProps = { setOptions: aceOptions, editorProps: aceEditorProps };
     const aceProps = { ...defaultProps, ...partProps,...heightProps, ...revertedArgs['props'] };
@@ -640,6 +640,8 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
          shortcuts={revertedArgs['shortcuts']} 
          snippetString={snippets} 
          commands={commands.commands} 
+         completions={revertedArgs['completions']}
+         replaceCompleter={revertedArgs['replace_completer']}
          keybindingString={keybindings} 
          props={aceProps} 
          onChange={onChangeHandler}

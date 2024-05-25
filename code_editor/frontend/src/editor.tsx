@@ -30,13 +30,15 @@ export type EditorProps = {
     editorRef: any,
     snippetString: string,
     commands: object[],
+    completions: object[],
     keybindingString: string,
+    replaceCompleter: boolean,
     onChange: (value: string, event?: any) => void,
     onSelectionChange: (value: any, event?: any) => void,
     onBlur: (event: any, editor?: any) => void
   }
   
-export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, keybindingString, editorRef, code, onChange, onSelectionChange, onBlur }: EditorProps ) => {
+export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, completions, keybindingString, editorRef, code, replaceCompleter, onChange, onSelectionChange, onBlur }: EditorProps ) => {
     
   let commandsList = useRef<object[]>(commands);
   useEffect(() => {
@@ -83,8 +85,31 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
         if(snippetsAddRemove[1])
           snippetManager.unregister(snippetManager.parseSnippetFile(snippetsAddRemove[1], snippetsLang), snippetsLang)
       }
+
+      // Add completions
+      if (completions.length > 0) {
+        const customCompleter = {
+          getCompletions: (
+              editor: ace.Ace.Editor,
+              session: ace.Ace.EditSession,
+              pos: ace.Ace.Point,
+              prefix: string,
+              callback: ace.Ace.CompleterCallback
+          ): void => {
+              callback(
+                  null,
+                  (completions as ace.Ace.Completion[])
+              );
+            },
+          };
+        if(replaceCompleter) {
+          editorRef.current.editor.completers.pop();
+        }
+        ace.require("ace/ext/language_tools").addCompleter(customCompleter);
+      }
     }
   }, [snippetString, keybindingString]);
+
 
   return (
           <AceEditor
