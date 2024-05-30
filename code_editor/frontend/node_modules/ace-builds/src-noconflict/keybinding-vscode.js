@@ -136,7 +136,7 @@ exports.handler.addCommands([{
         bindKey: { mac: "Command-Shift-K", win: "Ctrl-Shift-K" },
         name: "removeline"
     }, {
-        bindKey: { mac: "Command-Enter", win: "Ctrl-Enter" },
+        bindKey: { mac: "Shift-Enter", win: "Shift-Enter" },
         name: "addLineAfter"
     }, {
         bindKey: { mac: "Command-Shift-Enter", win: "Ctrl-Shift-Enter" },

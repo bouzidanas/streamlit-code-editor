@@ -329,6 +329,19 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
       }
     },
     {
+      name: 'appendGhostText',
+      description: "Add ghost test to end of line",
+      bindKey: { win: 'Ctrl-/', mac: 'Command-Alt-N' },
+      exec: (editor: any) => {
+        const ghostText = args['ghost_text'];
+        if(ghostText){
+          const cursorPos = editor.getCursorPosition();
+          const line = editor.session.getLine(cursorPos.row);
+          editor.session.replace({start: {row: cursorPos.row, column: line.length}, end: {row: cursorPos.row, column: line.length}}, ghostText);
+        }
+      }
+    },
+    {
       name: 'editSnippets',
       description: "Edit snippets",
       bindKey: { win: 'Ctrl-Alt-N', mac: 'Command-Alt-N' },
@@ -639,6 +652,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
          theme={themeProp} 
          shortcuts={revertedArgs['shortcuts']} 
          snippetString={snippets} 
+         ghostText={revertedArgs['ghost_text']}
          commands={commands.commands} 
          completions={revertedArgs['completions']}
          replaceCompleter={revertedArgs['replace_completer']}
