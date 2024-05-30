@@ -1,5 +1,5 @@
-require('../../modules/es.set');
+'use strict';
+var parent = require('../../stable/set/union');
 require('../../modules/esnext.set.union.v2');
-var entryUnbind = require('../../internals/entry-unbind');
 
-module.exports = entryUnbind('Set', 'union');
+module.exports = parent;

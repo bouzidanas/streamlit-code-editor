@@ -1,21 +1,25 @@
+'use strict';
 var aCallable = require('../internals/a-callable');
 var anObject = require('../internals/an-object');
 var call = require('../internals/function-call');
 var toIntegerOrInfinity = require('../internals/to-integer-or-infinity');
+var getIteratorDirect = require('../internals/get-iterator-direct');
 
+var INVALID_SIZE = 'Invalid size';
+var $RangeError = RangeError;
 var $TypeError = TypeError;
 var max = Math.max;
 
-var SetRecord = function (set, size, has, keys) {
+var SetRecord = function (set, intSize) {
   this.set = set;
-  this.size = size;
-  this.has = has;
-  this.keys = keys;
+  this.size = max(intSize, 0);
+  this.has = aCallable(set.has);
+  this.keys = aCallable(set.keys);
 };
 
 SetRecord.prototype = {
   getIterator: function () {
-    return anObject(call(this.keys, this.set));
+    return getIteratorDirect(anObject(call(this.keys, this.set)));
   },
   includes: function (it) {
     return call(this.has, this.set, it);
@@ -29,11 +33,8 @@ module.exports = function (obj) {
   var numSize = +obj.size;
   // NOTE: If size is undefined, then numSize will be NaN
   // eslint-disable-next-line no-self-compare -- NaN check
-  if (numSize != numSize) throw $TypeError('Invalid size');
-  return new SetRecord(
-    obj,
-    max(toIntegerOrInfinity(numSize), 0),
-    aCallable(obj.has),
-    aCallable(obj.keys)
-  );
+  if (numSize !== numSize) throw new $TypeError(INVALID_SIZE);
+  var intSize = toIntegerOrInfinity(numSize);
+  if (intSize < 0) throw new $RangeError(INVALID_SIZE);
+  return new SetRecord(obj, intSize);
 };

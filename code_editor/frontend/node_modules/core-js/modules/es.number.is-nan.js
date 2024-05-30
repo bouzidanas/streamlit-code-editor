@@ -1,3 +1,4 @@
+'use strict';
 var $ = require('../internals/export');
 
 // `Number.isNaN` method
@@ -5,6 +6,6 @@ var $ = require('../internals/export');
 $({ target: 'Number', stat: true }, {
   isNaN: function isNaN(number) {
     // eslint-disable-next-line no-self-compare -- NaN check
-    return number != number;
+    return number !== number;
   }
 });

@@ -1,5 +1,5 @@
-require('../../modules/es.set');
+'use strict';
+var parent = require('../../stable/set/symmetric-difference');
 require('../../modules/esnext.set.symmetric-difference.v2');
-var entryUnbind = require('../../internals/entry-unbind');
 
-module.exports = entryUnbind('Set', 'symmetricDifference');
+module.exports = parent;

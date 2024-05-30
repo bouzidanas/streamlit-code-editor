@@ -11,7 +11,6 @@
  * @return {RegExp} The parsed regular expression.
  */
 var RegexParser = module.exports = function (input) {
-
     // Validate input
     if (typeof input !== "string") {
         throw new Error("Invalid input. Input must be a string");
@@ -20,11 +19,16 @@ var RegexParser = module.exports = function (input) {
     // Parse input
     var m = input.match(/(\/?)(.+)\1([a-z]*)/i);
 
-    // Invalid flags
-    if (m[3] && !/^(?!.*?(.).*?\1)[gmixXsuUAJ]+$/.test(m[3])) {
-        return RegExp(input);
+    // If there's no match, throw an error
+    if (!m) {
+        throw new Error("Invalid regular expression format.");
     }
 
+    // Filter valid flags: 'g', 'i', 'm', 's', 'u', and 'y'
+    var validFlags = Array.from(new Set(m[3])).filter(function (flag) {
+        return "gimsuy".includes(flag);
+    }).join("");
+
     // Create the regular expression
-    return new RegExp(m[2], m[3]);
+    return new RegExp(m[2], validFlags);
 };

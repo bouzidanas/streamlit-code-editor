@@ -71,11 +71,13 @@ import {
     AST_Number,
     AST_ObjectKeyVal,
     AST_PropAccess,
+    AST_Scope,
     AST_Sequence,
     AST_SimpleStatement,
     AST_Symbol,
     AST_SymbolCatch,
     AST_SymbolConst,
+    AST_SymbolDeclaration,
     AST_SymbolDefun,
     AST_SymbolFunarg,
     AST_SymbolLambda,
@@ -93,13 +95,11 @@ import {
     walk,
     walk_body,
 
-    _INLINE,
-    _NOINLINE,
-    _PURE
+    TreeWalker,
 } from "../ast.js";
 import { HOP, make_node, noop } from "../utils/index.js";
 
-import { lazy_op, is_modified } from "./inference.js";
+import { lazy_op, is_modified, is_lhs } from "./inference.js";
 import { INLINED, clear_flag } from "./compressor-flags.js";
 import { read_property, has_break_or_continue, is_recursive_ref } from "./common.js";
 
@@ -447,17 +447,7 @@ def_reduce_vars(AST_Default, function(tw, descend) {
 
 function mark_lambda(tw, descend, compressor) {
     clear_flag(this, INLINED);
-
-    // Sometimes we detach the lambda for safety, and instead of push()
-    // we go to an entirely fresh lineage of safe_ids.
-    let previous_safe_ids;
-    if (this instanceof AST_Defun || this.uses_arguments || this.pinned()) {
-        previous_safe_ids = tw.safe_ids;
-        tw.safe_ids = Object.create(null);
-    } else {
-        push(tw);
-    }
-
+    push(tw);
     reset_variables(tw, compressor, this);
 
     var iife;
@@ -488,15 +478,147 @@ function mark_lambda(tw, descend, compressor) {
             }
         });
     }
-    descend();
 
-    if (previous_safe_ids) {
-        tw.safe_ids = previous_safe_ids;
-    } else {
-        pop(tw);
-    }
+    descend();
+    pop(tw);
+
+    handle_defined_after_hoist(this);
 
     return true;
+}
+
+/**
+ * It's possible for a hoisted function to use something that's not defined yet. Example:
+ *
+ * hoisted();
+ * var defined_after = true;
+ * function hoisted() {
+ *   // use defined_after
+ * }
+ *
+ * This function is called on the parent to handle this issue.
+ */
+function handle_defined_after_hoist(parent) {
+    const defuns = [];
+    walk(parent, node => {
+        if (node === parent) return;
+        if (node instanceof AST_Defun) defuns.push(node);
+        if (
+            node instanceof AST_Scope
+            || node instanceof AST_SimpleStatement
+        ) return true;
+    });
+
+    const symbols_of_interest = new Set();
+    const defuns_of_interest = new Set();
+    const potential_conflicts = [];
+
+    for (const defun of defuns) {
+        const fname_def = defun.name.definition();
+        const found_self_ref_in_other_defuns = defuns.some(
+            d => d !== defun && d.enclosed.indexOf(fname_def) !== -1
+        );
+
+        for (const def of defun.enclosed) {
+            if (
+                def.fixed === false
+                || def === fname_def
+                || def.scope.get_defun_scope() !== parent
+            ) {
+                continue;
+            }
+
+            // defun is hoisted, so always safe
+            if (
+                def.assignments === 0
+                && def.orig.length === 1
+                && def.orig[0] instanceof AST_SymbolDefun
+            ) {
+                continue;
+            }
+
+            if (found_self_ref_in_other_defuns) {
+                def.fixed = false;
+                continue;
+            }
+
+            // for the slower checks below this loop
+            potential_conflicts.push({ defun, def, fname_def });
+            symbols_of_interest.add(def.id);
+            symbols_of_interest.add(fname_def.id);
+            defuns_of_interest.add(defun);
+        }
+    }
+
+    // linearize all symbols, and locate defs that are read after the defun
+    if (potential_conflicts.length) {
+        // All "symbols of interest", that is, defuns or defs, that we found.
+        // These are placed in order so we can check which is after which.
+        const found_symbols = [];
+        // Indices of `found_symbols` which are writes
+        const found_symbol_writes = new Set();
+        // Defun ranges are recorded because we don't care if a function uses the def internally
+        const defun_ranges = new Map();
+
+        let tw;
+        parent.walk((tw = new TreeWalker((node, descend) => {
+            if (node instanceof AST_Defun && defuns_of_interest.has(node)) {
+                const start = found_symbols.length;
+                descend();
+                const end = found_symbols.length;
+
+                defun_ranges.set(node, { start, end });
+                return true;
+            }
+            // if we found a defun on the list, mark IN_DEFUN=id and descend
+
+            if (node instanceof AST_Symbol && node.thedef) {
+                const id = node.definition().id;
+                if (symbols_of_interest.has(id)) {
+                    if (node instanceof AST_SymbolDeclaration || is_lhs(node, tw)) {
+                        found_symbol_writes.add(found_symbols.length);
+                    }
+                    found_symbols.push(id);
+                }
+            }
+        })));
+
+        for (const { def, defun, fname_def } of potential_conflicts) {
+            const defun_range = defun_ranges.get(defun);
+
+            // find the index in `found_symbols`, with some special rules:
+            const find = (sym_id, starting_at = 0, must_be_write = false) => {
+                let index = starting_at;
+
+                for (;;) {
+                    index = found_symbols.indexOf(sym_id, index);
+
+                    if (index === -1) {
+                        break;
+                    } else if (index >= defun_range.start && index < defun_range.end) {
+                        index = defun_range.end;
+                        continue;
+                    } else if (must_be_write && !found_symbol_writes.has(index)) {
+                        index++;
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+
+                return index;
+            };
+
+            const read_defun_at = find(fname_def.id);
+            const wrote_def_at = find(def.id, read_defun_at + 1, true);
+
+            const wrote_def_after_reading_defun = read_defun_at != -1 && wrote_def_at != -1 && wrote_def_at > read_defun_at;
+
+            if (wrote_def_after_reading_defun) {
+                def.fixed = false;
+            }
+        }
+    }
 }
 
 def_reduce_vars(AST_Lambda, mark_lambda);
@@ -619,12 +741,15 @@ def_reduce_vars(AST_Toplevel, function(tw, descend, compressor) {
         reset_def(compressor, def);
     });
     reset_variables(tw, compressor, this);
+    descend();
+    handle_defined_after_hoist(this);
+    return true;
 });
 
 def_reduce_vars(AST_Try, function(tw, descend, compressor) {
     reset_block_variables(compressor, this);
     push(tw);
-    walk_body(this, tw);
+    this.body.walk(tw);
     pop(tw);
     if (this.bcatch) {
         push(tw);

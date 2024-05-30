@@ -2,9 +2,4 @@
 	"root": true,
 
 	"extends": "@ljharb",
-
-	"globals": {
-		"WeakMap": false,
-		"WeakSet": false,
-	},
 }

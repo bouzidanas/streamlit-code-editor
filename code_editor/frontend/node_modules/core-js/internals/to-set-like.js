@@ -1,3 +1,4 @@
+'use strict';
 var getBuiltIn = require('../internals/get-built-in');
 var isCallable = require('../internals/is-callable');
 var isIterable = require('../internals/is-iterable');
@@ -15,5 +16,5 @@ var isSetLike = function (it) {
 // fallback old -> new set methods proposal arguments
 module.exports = function (it) {
   if (isSetLike(it)) return it;
-  if (isIterable(it)) return new Set(it);
+  return isIterable(it) ? new Set(it) : it;
 };

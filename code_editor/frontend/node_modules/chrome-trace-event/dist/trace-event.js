@@ -112,10 +112,10 @@ class Tracer extends stream_1.Readable {
         });
     }
     begin(fields) {
-        return this.mkEventFunc("b")(fields);
+        return this.mkEventFunc("B")(fields);
     }
     end(fields) {
-        return this.mkEventFunc("e")(fields);
+        return this.mkEventFunc("E")(fields);
     }
     completeEvent(fields) {
         return this.mkEventFunc("X")(fields);

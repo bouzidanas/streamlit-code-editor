@@ -1,3 +1,4 @@
+'use strict';
 var uncurryThis = require('../internals/function-uncurry-this');
 var fails = require('../internals/fails');
 var isCallable = require('../internals/is-callable');
@@ -24,7 +25,7 @@ var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
   if (stringSlice($String(name), 0, 7) === 'Symbol(') {
-    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\).*$/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;

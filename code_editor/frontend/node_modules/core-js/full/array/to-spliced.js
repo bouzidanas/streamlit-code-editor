@@ -1,4 +1,4 @@
-require('../../modules/esnext.array.to-spliced');
-var entryUnbind = require('../../internals/entry-unbind');
+'use strict';
+var parent = require('../../actual/array/to-spliced');
 
-module.exports = entryUnbind('Array', 'toSpliced');
+module.exports = parent;

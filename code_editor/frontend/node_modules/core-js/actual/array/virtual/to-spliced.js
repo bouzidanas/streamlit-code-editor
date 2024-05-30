@@ -1,4 +1,6 @@
+'use strict';
+var parent = require('../../../stable/array/virtual/to-spliced');
+// TODO: Remove from `core-js@4`
 require('../../../modules/esnext.array.to-spliced');
-var entryVirtual = require('../../../internals/entry-virtual');
 
-module.exports = entryVirtual('Array').toSpliced;
+module.exports = parent;

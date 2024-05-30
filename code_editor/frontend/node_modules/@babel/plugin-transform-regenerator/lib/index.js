@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _helperPluginUtils = require("@babel/helper-plugin-utils");
 var _regeneratorTransform = require("regenerator-transform");
-var _default = (0, _helperPluginUtils.declare)(({
+var _default = exports.default = (0, _helperPluginUtils.declare)(({
   types: t,
   assertVersion
 }) => {
@@ -15,20 +15,25 @@ var _default = (0, _helperPluginUtils.declare)(({
     name: "transform-regenerator",
     inherits: _regeneratorTransform.default,
     visitor: {
-      MemberExpression(path) {
-        var _this$availableHelper;
-        if (!((_this$availableHelper = this.availableHelper) != null && _this$availableHelper.call(this, "regeneratorRuntime"))) {
-          return;
+      CallExpression(path) {
+        {
+          var _this$availableHelper;
+          if (!((_this$availableHelper = this.availableHelper) != null && _this$availableHelper.call(this, "regeneratorRuntime"))) {
+            return;
+          }
         }
-        const obj = path.get("object");
+        const callee = path.get("callee");
+        if (!callee.isMemberExpression()) return;
+        const obj = callee.get("object");
         if (obj.isIdentifier({
           name: "regeneratorRuntime"
         })) {
           const helper = this.addHelper("regeneratorRuntime");
-          if (
-          t.isArrowFunctionExpression(helper)) {
-            obj.replaceWith(helper.body);
-            return;
+          {
+            if (t.isArrowFunctionExpression(helper)) {
+              obj.replaceWith(helper.body);
+              return;
+            }
           }
           obj.replaceWith(t.callExpression(helper, []));
         }
@@ -36,6 +41,5 @@ var _default = (0, _helperPluginUtils.declare)(({
     }
   };
 });
-exports.default = _default;
 
 //# sourceMappingURL=index.js.map

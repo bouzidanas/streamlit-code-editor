@@ -1,4 +1,4 @@
-// TODO: Remove from `core-js@4`
+'use strict';
 var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
 
 // `Symbol.metadata` well-known symbol

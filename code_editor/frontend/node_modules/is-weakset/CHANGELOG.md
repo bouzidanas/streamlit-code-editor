@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.0.3](https://github.com/inspect-js/is-weakset/compare/v2.0.2...v2.0.3) - 2024-03-08
+
+### Commits
+
+- [meta] use `npmignore` to autogenerate an npmignore file [`e70d6aa`](https://github.com/inspect-js/is-weakset/commit/e70d6aa49d997930d3d88103090279ca1e480c7d)
+- add types [`c9bbc35`](https://github.com/inspect-js/is-weakset/commit/c9bbc35f4d87cfa206281ddf6eb0e595f7994b7e)
+- [readme] remove dead badges [`fb443f6`](https://github.com/inspect-js/is-weakset/commit/fb443f66e34a71a4d4ff41e09429f7479c9f4895)
+- [actions] remove redundant finisher [`eb292cc`](https://github.com/inspect-js/is-weakset/commit/eb292cc1c056725c1a9c7d5861c3bca03734710e)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `auto-changelog`, `es5-shim`, `object-inspect`, `tape` [`49d0c35`](https://github.com/inspect-js/is-weakset/commit/49d0c3583793fa2f097b66198a3a33dc2846c659)
+- [Dev Deps] update `@ljharb/eslint-config`, `aud`, `es6-shim`, `npmignore`, `object-inspect`, `tape` [`6ec0a57`](https://github.com/inspect-js/is-weakset/commit/6ec0a5720c92ac3624283580d4af58a1b8846f43)
+- [actions] update rebase action to use reusable workflow [`d996166`](https://github.com/inspect-js/is-weakset/commit/d9961664d6beb649e3ea8ee9b80309a0b60252fa)
+- [Deps] update `call-bind`, `get-intrinsic` [`e207da3`](https://github.com/inspect-js/is-weakset/commit/e207da3865a658e83c1e9f453edfc5c52e63ccc3)
+- [meta] add missing `engines.node` [`4d9dd14`](https://github.com/inspect-js/is-weakset/commit/4d9dd14f6919c969d7e6b8378d3aae2a7ea78a8f)
+- [Deps] update `get-intrinsic` [`cf796dd`](https://github.com/inspect-js/is-weakset/commit/cf796dd7e71ea08abb81332f244ae3ffd34bffd5)
+- [meta] add `sideEffects` flag [`c88a25d`](https://github.com/inspect-js/is-weakset/commit/c88a25df1f14630d937e730e75fd6b182356fc0b)
+
 ## [v2.0.2](https://github.com/inspect-js/is-weakset/compare/v2.0.1...v2.0.2) - 2021-12-12
 
 ### Commits

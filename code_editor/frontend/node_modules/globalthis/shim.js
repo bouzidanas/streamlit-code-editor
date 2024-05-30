@@ -1,13 +1,20 @@
 'use strict';
 
 var define = require('define-properties');
+var gOPD = require('gopd');
 var getPolyfill = require('./polyfill');
 
 module.exports = function shimGlobal() {
 	var polyfill = getPolyfill();
 	if (define.supportsDescriptors) {
-		var descriptor = Object.getOwnPropertyDescriptor(polyfill, 'globalThis');
-		if (!descriptor || (descriptor.configurable && (descriptor.enumerable || !descriptor.writable || globalThis !== polyfill))) { // eslint-disable-line max-len
+		var descriptor = gOPD(polyfill, 'globalThis');
+		if (
+			!descriptor
+			|| (
+				descriptor.configurable
+				&& (descriptor.enumerable || !descriptor.writable || globalThis !== polyfill)
+			)
+		) {
 			Object.defineProperty(polyfill, 'globalThis', {
 				configurable: true,
 				enumerable: false,

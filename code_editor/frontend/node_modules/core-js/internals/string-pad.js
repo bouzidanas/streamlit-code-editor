@@ -1,3 +1,4 @@
+'use strict';
 // https://github.com/tc39/proposal-string-pad-start-end
 var uncurryThis = require('../internals/function-uncurry-this');
 var toLength = require('../internals/to-length');
@@ -17,7 +18,7 @@ var createMethod = function (IS_END) {
     var stringLength = S.length;
     var fillStr = fillString === undefined ? ' ' : toString(fillString);
     var fillLen, stringFiller;
-    if (intMaxLength <= stringLength || fillStr == '') return S;
+    if (intMaxLength <= stringLength || fillStr === '') return S;
     fillLen = intMaxLength - stringLength;
     stringFiller = repeat(fillStr, ceil(fillLen / fillStr.length));
     if (stringFiller.length > fillLen) stringFiller = stringSlice(stringFiller, 0, fillLen);

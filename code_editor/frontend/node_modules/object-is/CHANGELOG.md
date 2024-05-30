@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.6](https://github.com/es-shims/object-is/compare/v1.1.5...v1.1.6) - 2024-02-27
+
+### Commits
+
+- [actions] reuse common workflows [`f8d0c06`](https://github.com/es-shims/object-is/commit/f8d0c0617901b4b220f2bbbaff8c9ec7f22891c6)
+- [actions] use `node/install` instead of `node/run` [`90fc019`](https://github.com/es-shims/object-is/commit/90fc01955dc677fef745f0dc4164e2144b047997)
+- [actions] update workflows [`37339d8`](https://github.com/es-shims/object-is/commit/37339d870aacad9f524cb685c0075aed78e9bd6e)
+- [meta] use `npmignore` to autogenerate an npmignore file [`a257c19`](https://github.com/es-shims/object-is/commit/a257c19d55c275ac44892b1d2d98a5d06e976943)
+- [readme] fix badges [`50af053`](https://github.com/es-shims/object-is/commit/50af053d4d8ee02657d71f784c31b372905187a7)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `@es-shims/api`, `safe-publish-latest`, `tape` [`86058c6`](https://github.com/es-shims/object-is/commit/86058c65153dea90d18ff969244bdc610f382046)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `auto-changelog`, `functions-have-names`, `has-symbols`, `tape` [`d5484eb`](https://github.com/es-shims/object-is/commit/d5484eb02a44482de29ce95ccfd01e885d0ff83b)
+- [actions] update rebase action to use reusable workflow [`68075c5`](https://github.com/es-shims/object-is/commit/68075c5bd0e35b51e815e7fd95bb90cc54deb699)
+- [actions] update codecov uploader [`f12fbb2`](https://github.com/es-shims/object-is/commit/f12fbb2f23b43c2d982fd00c95ff98b01e8747a1)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `auto-changelog`, `has-symbols`, `tape` [`43eb235`](https://github.com/es-shims/object-is/commit/43eb235ffa1dd258ff5ef990fd2f0ce78ce40ccc)
+- [Dev Deps] update `@es-shims/api`, `@ljharb/eslint-config`, `aud`, `npmignore`, `tape` [`f306966`](https://github.com/es-shims/object-is/commit/f306966e53fac2e24dd11dfe6cf31a8ae20a08da)
+- [readme] add actions and codecov badges [`e443b4a`](https://github.com/es-shims/object-is/commit/e443b4a3d0b01683cb6fec59916ad4ec463e9de7)
+- [readme] remove travis badge [`5165adc`](https://github.com/es-shims/object-is/commit/5165adccf9e8373f38a01e7a5887b42a4229ca2b)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `tape` [`e7ccf56`](https://github.com/es-shims/object-is/commit/e7ccf56f84434f6671fae1d1fe4945f5b3a84120)
+- [Deps] update `call-bind`, `define-properties` [`a3052db`](https://github.com/es-shims/object-is/commit/a3052db9e272c5d544553a7f43c916689e8cca9a)
+- [readme] fix URLs [`ac37ea6`](https://github.com/es-shims/object-is/commit/ac37ea68b2a11ef7ebff694e6c4f308c735240ea)
+- [readme] assert.notOk -&gt; assert.equal [`7fe769f`](https://github.com/es-shims/object-is/commit/7fe769fc8293d8756ed2d31c4d12afc0581498b7)
+- [Deps] update `call-bind` [`b965cd3`](https://github.com/es-shims/object-is/commit/b965cd319e1c397a5ef7dc6dffc9a5bd4329d408)
+- [Dev Deps] update `tape` [`a737830`](https://github.com/es-shims/object-is/commit/a737830a051cdc650c3bfb78b085586c9fd7cd13)
+- [Deps] update `define-properties`, `es-abstract` [`441eafb`](https://github.com/es-shims/object-is/commit/441eafbca4e32d76dc16bea6b73ee794296e2c0c)
+
 ## [v1.1.5](https://github.com/es-shims/object-is/compare/v1.1.4...v1.1.5) - 2021-02-20
 
 ### Commits

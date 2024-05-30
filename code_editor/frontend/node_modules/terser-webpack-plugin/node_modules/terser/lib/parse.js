@@ -152,6 +152,7 @@ import {
     AST_Toplevel,
     AST_True,
     AST_Try,
+    AST_TryBlock,
     AST_UnaryPostfix,
     AST_UnaryPrefix,
     AST_Var,
@@ -161,7 +162,9 @@ import {
     AST_Yield,
     _INLINE,
     _NOINLINE,
-    _PURE
+    _PURE,
+    _KEY,
+    _MANGLEPROP,
 } from "./ast.js";
 
 var LATEST_RAW = "";  // Only used for numbers and template strings
@@ -798,7 +801,12 @@ function tokenizer($TEXT, filename, html5_comments, shebang) {
         while ((ch = next(true))) if (NEWLINE_CHARS.has(ch)) {
             parse_error("Unexpected line terminator");
         } else if (prev_backslash) {
-            source += "\\" + ch;
+            if (/^[\u0000-\u007F]$/.test(ch)) {
+                source += "\\" + ch;
+            } else {
+                // Remove the useless slash before the escape, but only for characters that won't be added to regexp syntax
+                source += ch;
+            }
             prev_backslash = false;
         } else if (ch == "[") {
             in_class = true;
@@ -1019,9 +1027,8 @@ var LOGICAL_ASSIGNMENT = makePredicate([ "??=", "&&=", "||=" ]);
 
 var PRECEDENCE = (function(a, ret) {
     for (var i = 0; i < a.length; ++i) {
-        var b = a[i];
-        for (var j = 0; j < b.length; ++j) {
-            ret[b[j]] = i + 1;
+        for (const op of a[i]) {
+            ret[op] = i + 1;
         }
     }
     return ret;
@@ -2053,7 +2060,12 @@ function parse($TEXT, options) {
     }
 
     function try_() {
-        var body = block_(), bcatch = null, bfinally = null;
+        var body, bcatch = null, bfinally = null;
+        body = new AST_TryBlock({
+            start : S.token,
+            body  : block_(),
+            end   : prev(),
+        });
         if (is("keyword", "catch")) {
             var start = S.token;
             next();
@@ -2206,6 +2218,7 @@ function parse($TEXT, options) {
                 value : tok.value,
                 quote : tok.quote
             });
+            annotate(ret);
             break;
           case "regexp":
             const [_, source, flags] = tok.value.match(/^\/(.*)\/(\w*)$/);
@@ -2288,8 +2301,8 @@ function parse($TEXT, options) {
         if (is("operator", "new")) {
             return new_(allow_calls);
         }
-        if (is("operator", "import")) {
-            return import_meta();
+        if (is("name", "import") && is_token(peek(), "punc", ".")) {
+            return import_meta(allow_calls);
         }
         var start = S.token;
         var peeked;
@@ -2308,9 +2321,7 @@ function parse($TEXT, options) {
                 var ex = async ? new AST_Call({
                     expression: async,
                     args: exprs
-                }) : exprs.length == 1 ? exprs[0] : new AST_Sequence({
-                    expressions: exprs
-                });
+                }) : to_expr_or_sequence(start, exprs);
                 if (ex.start) {
                     const outer_comments_before = start.comments_before.length;
                     outer_comments_before_counts.set(start, outer_comments_before);
@@ -2368,29 +2379,6 @@ function parse($TEXT, options) {
         }
         if (is("template_head")) {
             return subscripts(template_string(), allow_calls);
-        }
-        if (is("privatename")) {
-            if(!S.in_class) {
-                croak("Private field must be used in an enclosing class");
-            }
-
-            const start = S.token;
-            const key = new AST_SymbolPrivateProperty({
-                start,
-                name: start.value,
-                end: start
-            });
-            next();
-            expect_token("operator", "in");
-
-            const private_in = new AST_PrivateIn({
-                start,
-                key,
-                value: subscripts(as_atom_node(), allow_calls),
-                end: prev()
-            });
-
-            return subscripts(private_in, allow_calls);
         }
         if (ATOMIC_START_TOKEN.has(S.token.type)) {
             return subscripts(as_atom_node(), allow_calls);
@@ -2517,13 +2505,14 @@ function parse($TEXT, options) {
             }
 
             // Create property
-            a.push(new AST_ObjectKeyVal({
+            const kv = new AST_ObjectKeyVal({
                 start: start,
                 quote: start.quote,
                 key: name instanceof AST_Node ? name : "" + name,
                 value: value,
                 end: prev()
-            }));
+            });
+            a.push(annotate(kv));
         }
         next();
         return new AST_Object({ properties: a });
@@ -2636,26 +2625,26 @@ function parse($TEXT, options) {
                     : AST_ObjectSetter;
 
                 name = get_symbol_ast(name);
-                return new AccessorClass({
+                return annotate(new AccessorClass({
                     start,
                     static: is_static,
                     key: name,
                     quote: name instanceof AST_SymbolMethod ? property_token.quote : undefined,
                     value: create_accessor(),
                     end: prev()
-                });
+                }));
             } else {
                 const AccessorClass = accessor_type === "get"
                     ? AST_PrivateGetter
                     : AST_PrivateSetter;
 
-                return new AccessorClass({
+                return annotate(new AccessorClass({
                     start,
                     static: is_static,
                     key: get_symbol_ast(name),
                     value: create_accessor(),
                     end: prev(),
-                });
+                }));
             }
         }
 
@@ -2675,7 +2664,7 @@ function parse($TEXT, options) {
                 value       : create_accessor(is_generator, is_async),
                 end         : prev()
             });
-            return node;
+            return annotate(node);
         }
 
         if (is_class) {
@@ -2688,14 +2677,16 @@ function parse($TEXT, options) {
                 : AST_ClassProperty;
             if (is("operator", "=")) {
                 next();
-                return new AST_ClassPropertyVariant({
-                    start,
-                    static: is_static,
-                    quote,
-                    key,
-                    value: expression(false),
-                    end: prev()
-                });
+                return annotate(
+                    new AST_ClassPropertyVariant({
+                        start,
+                        static: is_static,
+                        quote,
+                        key,
+                        value: expression(false),
+                        end: prev()
+                    })
+                );
             } else if (
                 is("name")
                 || is("privatename")
@@ -2703,13 +2694,15 @@ function parse($TEXT, options) {
                 || is("punc", ";")
                 || is("punc", "}")
             ) {
-                return new AST_ClassPropertyVariant({
-                    start,
-                    static: is_static,
-                    quote,
-                    key,
-                    end: prev()
-                });
+                return annotate(
+                    new AST_ClassPropertyVariant({
+                        start,
+                        static: is_static,
+                        quote,
+                        key,
+                        end: prev()
+                    })
+                );
             }
         }
     }
@@ -2782,15 +2775,15 @@ function parse($TEXT, options) {
         });
     }
 
-    function import_meta() {
+    function import_meta(allow_calls) {
         var start = S.token;
-        expect_token("operator", "import");
+        expect_token("name", "import");
         expect_token("punc", ".");
         expect_token("name", "meta");
         return subscripts(new AST_ImportMeta({
             start: start,
             end: prev()
-        }), false);
+        }), allow_calls);
     }
 
     function map_name(is_import) {
@@ -3072,10 +3065,9 @@ function parse($TEXT, options) {
     }
 
     // Annotate AST_Call, AST_Lambda or AST_New with the special comments
-    function annotate(node) {
-        var start = node.start;
-        var comments = start.comments_before;
-        const comments_outside_parens = outer_comments_before_counts.get(start);
+    function annotate(node, before_token = node.start) {
+        var comments = before_token.comments_before;
+        const comments_outside_parens = outer_comments_before_counts.get(before_token);
         var i = comments_outside_parens != null ? comments_outside_parens : comments.length;
         while (--i >= 0) {
             var comment = comments[i];
@@ -3092,8 +3084,17 @@ function parse($TEXT, options) {
                     set_annotation(node, _NOINLINE);
                     break;
                 }
+                if (/[@#]__KEY__/.test(comment.value)) {
+                    set_annotation(node, _KEY);
+                    break;
+                }
+                if (/[@#]__MANGLE_PROP__/.test(comment.value)) {
+                    set_annotation(node, _MANGLEPROP);
+                    break;
+                }
             }
         }
+        return node;
     }
 
     var subscripts = function(expr, allow_calls, is_chain) {
@@ -3103,25 +3104,25 @@ function parse($TEXT, options) {
             if(is("privatename") && !S.in_class) 
                 croak("Private field must be used in an enclosing class");
             const AST_DotVariant = is("privatename") ? AST_DotHash : AST_Dot;
-            return subscripts(new AST_DotVariant({
+            return annotate(subscripts(new AST_DotVariant({
                 start      : start,
                 expression : expr,
                 optional   : false,
                 property   : as_name(),
                 end        : prev()
-            }), allow_calls, is_chain);
+            }), allow_calls, is_chain));
         }
         if (is("punc", "[")) {
             next();
             var prop = expression(true);
             expect("]");
-            return subscripts(new AST_Sub({
+            return annotate(subscripts(new AST_Sub({
                 start      : start,
                 expression : expr,
                 optional   : false,
                 property   : prop,
                 end        : prev()
-            }), allow_calls, is_chain);
+            }), allow_calls, is_chain));
         }
         if (allow_calls && is("punc", "(")) {
             next();
@@ -3158,24 +3159,24 @@ function parse($TEXT, options) {
                 if(is("privatename") && !S.in_class) 
                     croak("Private field must be used in an enclosing class");
                 const AST_DotVariant = is("privatename") ? AST_DotHash : AST_Dot;
-                chain_contents = subscripts(new AST_DotVariant({
+                chain_contents = annotate(subscripts(new AST_DotVariant({
                     start,
                     expression: expr,
                     optional: true,
                     property: as_name(),
                     end: prev()
-                }), allow_calls, true);
+                }), allow_calls, true));
             } else if (is("punc", "[")) {
                 next();
                 const property = expression(true);
                 expect("]");
-                chain_contents = subscripts(new AST_Sub({
+                chain_contents = annotate(subscripts(new AST_Sub({
                     start,
                     expression: expr,
                     optional: true,
                     property,
                     end: prev()
-                }), allow_calls, true);
+                }), allow_calls, true));
             }
 
             if (!chain_contents) unexpected();
@@ -3278,7 +3279,7 @@ function parse($TEXT, options) {
         var prec = op != null ? PRECEDENCE[op] : null;
         if (prec != null && (prec > min_prec || (op === "**" && min_prec === prec))) {
             next();
-            var right = expr_op(maybe_unary(true), prec, no_in);
+            var right = expr_ops(no_in, prec, true);
             return expr_op(new AST_Binary({
                 start    : left.start,
                 left     : left,
@@ -3290,13 +3291,38 @@ function parse($TEXT, options) {
         return left;
     };
 
-    function expr_ops(no_in) {
-        return expr_op(maybe_unary(true, true), 0, no_in);
+    function expr_ops(no_in, min_prec, allow_calls, allow_arrows) {
+        // maybe_unary won't return us a AST_SymbolPrivateProperty
+        if (!no_in && min_prec < PRECEDENCE["in"] && is("privatename")) {
+            if(!S.in_class) {
+                croak("Private field must be used in an enclosing class");
+            }
+
+            const start = S.token;
+            const key = new AST_SymbolPrivateProperty({
+                start,
+                name: start.value,
+                end: start
+            });
+            next();
+            expect_token("operator", "in");
+
+            const private_in = new AST_PrivateIn({
+                start,
+                key,
+                value: expr_ops(no_in, PRECEDENCE["in"], true),
+                end: prev()
+            });
+
+            return expr_op(private_in, 0, no_in);
+        } else {
+            return expr_op(maybe_unary(allow_calls, allow_arrows), min_prec, no_in);
+        }
     }
 
     var maybe_conditional = function(no_in) {
         var start = S.token;
-        var expr = expr_ops(no_in);
+        var expr = expr_ops(no_in, 0, true, true);
         if (is("operator", "?")) {
             next();
             var yes = expression(false);
@@ -3394,6 +3420,16 @@ function parse($TEXT, options) {
         return left;
     };
 
+    var to_expr_or_sequence = function(start, exprs) {
+        if (exprs.length === 1) {
+            return exprs[0];
+        } else if (exprs.length > 1) {
+            return new AST_Sequence({ start, expressions: exprs, end: peek() });
+        } else {
+            croak("Invalid parenthesized expression");
+        }
+    };
+
     var expression = function(commas, no_in) {
         var start = S.token;
         var exprs = [];
@@ -3403,11 +3439,7 @@ function parse($TEXT, options) {
             next();
             commas = true;
         }
-        return exprs.length == 1 ? exprs[0] : new AST_Sequence({
-            start       : start,
-            expressions : exprs,
-            end         : peek()
-        });
+        return to_expr_or_sequence(start, exprs);
     };
 
     function in_loop(cont) {

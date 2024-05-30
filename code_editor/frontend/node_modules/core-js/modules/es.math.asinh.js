@@ -1,3 +1,4 @@
+'use strict';
 var $ = require('../internals/export');
 
 // eslint-disable-next-line es/no-math-asinh -- required for testing
@@ -7,7 +8,7 @@ var sqrt = Math.sqrt;
 
 function asinh(x) {
   var n = +x;
-  return !isFinite(n) || n == 0 ? n : n < 0 ? -asinh(-n) : log(n + sqrt(n * n + 1));
+  return !isFinite(n) || n === 0 ? n : n < 0 ? -asinh(-n) : log(n + sqrt(n * n + 1));
 }
 
 var FORCED = !($asinh && 1 / $asinh(0) > 0);

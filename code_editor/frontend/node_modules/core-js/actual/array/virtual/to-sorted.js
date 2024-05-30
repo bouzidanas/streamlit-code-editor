@@ -1,5 +1,6 @@
-require('../../../modules/es.array.sort');
+'use strict';
+var parent = require('../../../stable/array/virtual/to-sorted');
+// TODO: Remove from `core-js@4`
 require('../../../modules/esnext.array.to-sorted');
-var entryVirtual = require('../../../internals/entry-virtual');
 
-module.exports = entryVirtual('Array').toSorted;
+module.exports = parent;

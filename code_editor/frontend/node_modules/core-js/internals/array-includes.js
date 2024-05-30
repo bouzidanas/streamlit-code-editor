@@ -1,3 +1,4 @@
+'use strict';
 var toIndexedObject = require('../internals/to-indexed-object');
 var toAbsoluteIndex = require('../internals/to-absolute-index');
 var lengthOfArrayLike = require('../internals/length-of-array-like');
@@ -7,14 +8,15 @@ var createMethod = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIndexedObject($this);
     var length = lengthOfArrayLike(O);
+    if (length === 0) return !IS_INCLUDES && -1;
     var index = toAbsoluteIndex(fromIndex, length);
     var value;
     // Array#includes uses SameValueZero equality algorithm
     // eslint-disable-next-line no-self-compare -- NaN check
-    if (IS_INCLUDES && el != el) while (length > index) {
+    if (IS_INCLUDES && el !== el) while (length > index) {
       value = O[index++];
       // eslint-disable-next-line no-self-compare -- NaN check
-      if (value != value) return true;
+      if (value !== value) return true;
     // Array#indexOf ignores holes, Array#includes - not
     } else for (;length > index; index++) {
       if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;

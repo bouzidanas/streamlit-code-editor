@@ -1,3 +1,4 @@
+'use strict';
 // based on https://github.com/bestiejs/punycode.js/blob/master/punycode.js
 var uncurryThis = require('../internals/function-uncurry-this');
 
@@ -42,7 +43,7 @@ var ucs2decode = function (string) {
     if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
       // It's a high surrogate, and there is a next character.
       var extra = charCodeAt(string, counter++);
-      if ((extra & 0xFC00) == 0xDC00) { // Low surrogate.
+      if ((extra & 0xFC00) === 0xDC00) { // Low surrogate.
         push(output, ((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
       } else {
         // It's an unmatched surrogate; only append this code unit, in case the
@@ -130,7 +131,7 @@ var encode = function (input) {
     // Increase `delta` enough to advance the decoder's <n,i> state to <m,0>, but guard against overflow.
     var handledCPCountPlusOne = handledCPCount + 1;
     if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-      throw $RangeError(OVERFLOW_ERROR);
+      throw new $RangeError(OVERFLOW_ERROR);
     }
 
     delta += (m - n) * handledCPCountPlusOne;
@@ -139,14 +140,14 @@ var encode = function (input) {
     for (i = 0; i < input.length; i++) {
       currentValue = input[i];
       if (currentValue < n && ++delta > maxInt) {
-        throw $RangeError(OVERFLOW_ERROR);
+        throw new $RangeError(OVERFLOW_ERROR);
       }
-      if (currentValue == n) {
+      if (currentValue === n) {
         // Represent delta as a generalized variable-length integer.
         var q = delta;
         var k = base;
         while (true) {
-          var t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+          var t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
           if (q < t) break;
           var qMinusT = q - t;
           var baseMinusT = base - t;
@@ -156,7 +157,7 @@ var encode = function (input) {
         }
 
         push(output, fromCharCode(digitToBasic(q)));
-        bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+        bias = adapt(delta, handledCPCountPlusOne, handledCPCount === basicLength);
         delta = 0;
         handledCPCount++;
       }

@@ -1,3 +1,4 @@
+'use strict';
 var call = require('../internals/function-call');
 var isCallable = require('../internals/is-callable');
 var anObject = require('../internals/an-object');
@@ -9,7 +10,7 @@ var AsyncFromSyncIterator = require('../internals/async-from-sync-iterator');
 
 var ASYNC_ITERATOR = wellKnownSymbol('asyncIterator');
 
-module.exports = function from(obj) {
+module.exports = function (obj) {
   var object = anObject(obj);
   var alreadyAsync = true;
   var method = getMethod(object, ASYNC_ITERATOR);
@@ -18,7 +19,7 @@ module.exports = function from(obj) {
     method = getIteratorMethod(object);
     alreadyAsync = false;
   }
-  if (isCallable(method)) {
+  if (method !== undefined) {
     iterator = call(method, object);
   } else {
     iterator = object;

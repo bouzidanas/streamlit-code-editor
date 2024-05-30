@@ -22,7 +22,7 @@ class PackJob {
   }
 }
 
-const MiniPass = require('minipass')
+const { Minipass } = require('minipass')
 const zlib = require('minizlib')
 const ReadEntry = require('./read-entry.js')
 const WriteEntry = require('./write-entry.js')
@@ -56,7 +56,7 @@ const path = require('path')
 const warner = require('./warn-mixin.js')
 const normPath = require('./normalize-windows-path.js')
 
-const Pack = warner(class Pack extends MiniPass {
+const Pack = warner(class Pack extends Minipass {
   constructor (opt) {
     super(opt)
     opt = opt || Object.create(null)
@@ -79,14 +79,26 @@ const Pack = warner(class Pack extends MiniPass {
 
     this.portable = !!opt.portable
     this.zip = null
-    if (opt.gzip) {
-      if (typeof opt.gzip !== 'object') {
-        opt.gzip = {}
+
+    if (opt.gzip || opt.brotli) {
+      if (opt.gzip && opt.brotli) {
+        throw new TypeError('gzip and brotli are mutually exclusive')
       }
-      if (this.portable) {
-        opt.gzip.portable = true
+      if (opt.gzip) {
+        if (typeof opt.gzip !== 'object') {
+          opt.gzip = {}
+        }
+        if (this.portable) {
+          opt.gzip.portable = true
+        }
+        this.zip = new zlib.Gzip(opt.gzip)
       }
-      this.zip = new zlib.Gzip(opt.gzip)
+      if (opt.brotli) {
+        if (typeof opt.brotli !== 'object') {
+          opt.brotli = {}
+        }
+        this.zip = new zlib.BrotliCompress(opt.brotli)
+      }
       this.zip.on('data', chunk => super.write(chunk))
       this.zip.on('end', _ => super.end())
       this.zip.on('drain', _ => this[ONDRAIN]())

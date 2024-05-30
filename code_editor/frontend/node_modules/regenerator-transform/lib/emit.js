@@ -57,8 +57,13 @@ exports.Emitter = Emitter;
 // the amazingly convenient benefit of allowing the exact value of the
 // location to be determined at any time, even after generating code that
 // refers to the location.
+// We use 'Number.MAX_VALUE' to mark uninitialized location. We can safely do
+// so because no code can realistically have about 1.8e+308 locations before
+// hitting memory limit of the machine it's running on. For comparison, the
+// estimated number of atoms in the observable universe is around 1e+80.
+var PENDING_LOCATION = Number.MAX_VALUE;
 Ep.loc = function () {
-  var l = util.getTypes().numericLiteral(-1);
+  var l = util.getTypes().numericLiteral(PENDING_LOCATION);
   this.insertedLocs.add(l);
   return l;
 };
@@ -74,7 +79,7 @@ Ep.getContextId = function () {
 Ep.mark = function (loc) {
   util.getTypes().assertLiteral(loc);
   var index = this.listing.length;
-  if (loc.value === -1) {
+  if (loc.value === PENDING_LOCATION) {
     loc.value = index;
   } else {
     // Locations can be marked redundantly, but their values cannot change
@@ -459,7 +464,7 @@ Ep.explodeStatement = function (path, labelId) {
         });
       });
       self.mark(after);
-      if (defaultLoc.value === -1) {
+      if (defaultLoc.value === PENDING_LOCATION) {
         self.mark(defaultLoc);
         _assert["default"].strictEqual(after.value, defaultLoc.value);
       }
@@ -614,7 +619,7 @@ Ep.updateContextPrevLoc = function (loc) {
   var t = util.getTypes();
   if (loc) {
     t.assertLiteral(loc);
-    if (loc.value === -1) {
+    if (loc.value === PENDING_LOCATION) {
       // If an uninitialized location literal was passed in, set its value
       // to the current this.listing.length.
       loc.value = this.listing.length;

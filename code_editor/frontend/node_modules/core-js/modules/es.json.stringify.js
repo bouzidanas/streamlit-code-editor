@@ -1,16 +1,17 @@
+'use strict';
 var $ = require('../internals/export');
 var getBuiltIn = require('../internals/get-built-in');
 var apply = require('../internals/function-apply');
 var call = require('../internals/function-call');
 var uncurryThis = require('../internals/function-uncurry-this');
 var fails = require('../internals/fails');
-var isArray = require('../internals/is-array');
 var isCallable = require('../internals/is-callable');
-var isObject = require('../internals/is-object');
 var isSymbol = require('../internals/is-symbol');
 var arraySlice = require('../internals/array-slice');
+var getReplacerFunction = require('../internals/get-json-replacer-function');
 var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
 
+var $String = String;
 var $stringify = getBuiltIn('JSON', 'stringify');
 var exec = uncurryThis(/./.exec);
 var charAt = uncurryThis(''.charAt);
@@ -23,13 +24,13 @@ var low = /^[\uD800-\uDBFF]$/;
 var hi = /^[\uDC00-\uDFFF]$/;
 
 var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails(function () {
-  var symbol = getBuiltIn('Symbol')();
+  var symbol = getBuiltIn('Symbol')('stringify detection');
   // MS Edge converts symbol values to JSON as {}
-  return $stringify([symbol]) != '[null]'
+  return $stringify([symbol]) !== '[null]'
     // WebKit converts symbol values to JSON as null
-    || $stringify({ a: symbol }) != '{}'
+    || $stringify({ a: symbol }) !== '{}'
     // V8 throws on boxed symbols
-    || $stringify(Object(symbol)) != '{}';
+    || $stringify(Object(symbol)) !== '{}';
 });
 
 // https://github.com/tc39/proposal-well-formed-stringify
@@ -40,13 +41,13 @@ var ILL_FORMED_UNICODE = fails(function () {
 
 var stringifyWithSymbolsFix = function (it, replacer) {
   var args = arraySlice(arguments);
-  var $replacer = replacer;
-  if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
-  if (!isArray(replacer)) replacer = function (key, value) {
-    if (isCallable($replacer)) value = call($replacer, this, key, value);
+  var $replacer = getReplacerFunction(replacer);
+  if (!isCallable($replacer) && (it === undefined || isSymbol(it))) return; // IE8 returns string on undefined
+  args[1] = function (key, value) {
+    // some old implementations (like WebKit) could pass numbers as keys
+    if (isCallable($replacer)) value = call($replacer, this, $String(key), value);
     if (!isSymbol(value)) return value;
   };
-  args[1] = replacer;
   return apply($stringify, null, args);
 };
 

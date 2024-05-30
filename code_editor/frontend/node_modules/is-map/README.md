@@ -1,5 +1,7 @@
 # is-map <sup>[![Version Badge][2]][1]</sup>
 
+[![github actions][actions-image]][actions-url]
+[![coverage][codecov-image]][codecov-url]
 [![dependency status][5]][6]
 [![dev dependency status][7]][8]
 [![License][license-image]][license-url]
@@ -44,3 +46,7 @@ Simply clone the repo, `npm install`, and run `npm test`
 [license-url]: LICENSE
 [downloads-image]: https://img.shields.io/npm/dm/is-map.svg
 [downloads-url]: https://npm-stat.com/charts.html?package=is-map
+[codecov-image]: https://codecov.io/gh/inspect-js/is-map/branch/main/graphs/badge.svg
+[codecov-url]: https://app.codecov.io/gh/inspect-js/is-map/
+[actions-image]: https://img.shields.io/endpoint?url=https://github-actions-badge-u3jn4tfpocch.runkit.sh/inspect-js/is-map
+[actions-url]: https://github.com/inspect-js/is-map/actions

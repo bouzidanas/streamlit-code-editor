@@ -52,7 +52,6 @@ import {
     AST_Break,
     AST_Call,
     AST_Case,
-    AST_Catch,
     AST_Chain,
     AST_Class,
     AST_Conditional,
@@ -71,7 +70,6 @@ import {
     AST_Exit,
     AST_Expansion,
     AST_Export,
-    AST_Finally,
     AST_For,
     AST_ForIn,
     AST_If,
@@ -84,6 +82,7 @@ import {
     AST_Number,
     AST_Object,
     AST_ObjectKeyVal,
+    AST_ObjectProperty,
     AST_PropAccess,
     AST_RegExp,
     AST_Return,
@@ -103,6 +102,7 @@ import {
     AST_SymbolVar,
     AST_This,
     AST_Try,
+    AST_TryBlock,
     AST_Unary,
     AST_UnaryPostfix,
     AST_UnaryPrefix,
@@ -117,7 +117,7 @@ import {
     walk,
     walk_abort,
 
-    _NOINLINE
+    _NOINLINE,
 } from "../ast.js";
 import {
     make_node,
@@ -171,12 +171,31 @@ function is_lhs_read_only(lhs) {
     return false;
 }
 
-// Remove code which we know is unreachable.
+/** var a = 1 --> var a*/
+function remove_initializers(var_statement) {
+    var decls = [];
+    var_statement.definitions.forEach(function(def) {
+        if (def.name instanceof AST_SymbolDeclaration) {
+            def.value = null;
+            decls.push(def);
+        } else {
+            def.declarations_as_names().forEach(name => {
+                decls.push(make_node(AST_VarDef, def, {
+                    name,
+                    value: null
+                }));
+            });
+        }
+    });
+    return decls.length ? make_node(AST_Var, var_statement, { definitions: decls }) : null;
+}
+
+/** Called on code which we know is unreachable, to keep elements that affect outside of it. */
 export function trim_unreachable_code(compressor, stat, target) {
     walk(stat, node => {
         if (node instanceof AST_Var) {
-            node.remove_initializers();
-            target.push(node);
+            const no_initializers = remove_initializers(node);
+            if (no_initializers) target.push(no_initializers);
             return true;
         }
         if (
@@ -234,13 +253,11 @@ export function tighten_body(statements, compressor) {
     function find_loop_scope_try() {
         var node = compressor.self(), level = 0, in_loop = false, in_try = false;
         do {
-            if (node instanceof AST_Catch || node instanceof AST_Finally) {
-                level++;
-            } else if (node instanceof AST_IterationStatement) {
+            if (node instanceof AST_IterationStatement) {
                 in_loop = true;
             } else if (node instanceof AST_Scope) {
                 break;
-            } else if (node instanceof AST_Try) {
+            } else if (node instanceof AST_TryBlock) {
                 in_try = true;
             }
         } while (node = compressor.parent(level++));
@@ -284,6 +301,9 @@ export function tighten_body(statements, compressor) {
                     && (node.logical || node.operator != "=" && lhs.equivalent_to(node.left))
                 || node instanceof AST_Await
                 || node instanceof AST_Call && lhs instanceof AST_PropAccess && lhs.equivalent_to(node.expression)
+                ||
+                    (node instanceof AST_Call || node instanceof AST_PropAccess)
+                    && node.optional
                 || node instanceof AST_Debugger
                 || node instanceof AST_Destructuring
                 || node instanceof AST_Expansion
@@ -309,6 +329,7 @@ export function tighten_body(statements, compressor) {
                 || node instanceof AST_SymbolRef
                     && parent instanceof AST_Call
                     && has_annotation(parent, _NOINLINE)
+                || node instanceof AST_ObjectProperty && node.key instanceof AST_Node
             ) {
                 abort = true;
                 return node;
@@ -457,7 +478,11 @@ export function tighten_body(statements, compressor) {
                 var hit = funarg;
                 var abort = false, replaced = 0, can_replace = !args || !hit;
                 if (!can_replace) {
-                    for (var j = compressor.self().argnames.lastIndexOf(candidate.name) + 1; !abort && j < args.length; j++) {
+                    for (
+                        let j = compressor.self().argnames.lastIndexOf(candidate.name) + 1;
+                        !abort && j < args.length;
+                        j++
+                    ) {
                         args[j].transform(scanner);
                     }
                     can_replace = true;
@@ -551,6 +576,14 @@ export function tighten_body(statements, compressor) {
             return found;
         }
 
+        function arg_is_injectable(arg) {
+            if (arg instanceof AST_Expansion) return false;
+            const contains_await = walk(arg, (node) => {
+                if (node instanceof AST_Await) return walk_abort;
+            });
+            if (contains_await) return false;
+            return true;
+        }
         function extract_args() {
             var iife, fn = compressor.self();
             if (is_func_expr(fn)
@@ -559,7 +592,8 @@ export function tighten_body(statements, compressor) {
                 && !fn.pinned()
                 && (iife = compressor.parent()) instanceof AST_Call
                 && iife.expression === fn
-                && iife.args.every((arg) => !(arg instanceof AST_Expansion))) {
+                && iife.args.every(arg_is_injectable)
+            ) {
                 var fn_strict = compressor.has_directive("use strict");
                 if (fn_strict && !member(fn_strict, fn.body))
                     fn_strict = false;
@@ -958,7 +992,11 @@ export function tighten_body(statements, compressor) {
         var self = compressor.self();
         var multiple_if_returns = has_multiple_if_returns(statements);
         var in_lambda = self instanceof AST_Lambda;
-        for (var i = statements.length; --i >= 0;) {
+        // Prevent extremely deep nesting
+        // https://github.com/terser/terser/issues/1432
+        // https://github.com/webpack/webpack/issues/17548
+        const iteration_start = Math.min(statements.length, 500);
+        for (var i = iteration_start; --i >= 0;) {
             var stat = statements[i];
             var j = next_index(i);
             var next = statements[j];
@@ -979,27 +1017,34 @@ export function tighten_body(statements, compressor) {
             }
 
             if (stat instanceof AST_If) {
-                var ab = aborts(stat.body);
-                if (can_merge_flow(ab)) {
+                let ab, new_else;
+
+                ab = aborts(stat.body);
+                if (
+                    can_merge_flow(ab)
+                    && (new_else = as_statement_array_with_return(stat.body, ab))
+                ) {
                     if (ab.label) {
                         remove(ab.label.thedef.references, ab);
                     }
                     CHANGED = true;
                     stat = stat.clone();
                     stat.condition = stat.condition.negate(compressor);
-                    var body = as_statement_array_with_return(stat.body, ab);
                     stat.body = make_node(AST_BlockStatement, stat, {
                         body: as_statement_array(stat.alternative).concat(extract_functions())
                     });
                     stat.alternative = make_node(AST_BlockStatement, stat, {
-                        body: body
+                        body: new_else
                     });
                     statements[i] = stat.transform(compressor);
                     continue;
                 }
 
-                var ab = aborts(stat.alternative);
-                if (can_merge_flow(ab)) {
+                ab = aborts(stat.alternative);
+                if (
+                    can_merge_flow(ab)
+                    && (new_else = as_statement_array_with_return(stat.alternative, ab))
+                ) {
                     if (ab.label) {
                         remove(ab.label.thedef.references, ab);
                     }
@@ -1008,9 +1053,8 @@ export function tighten_body(statements, compressor) {
                     stat.body = make_node(AST_BlockStatement, stat.body, {
                         body: as_statement_array(stat.body).concat(extract_functions())
                     });
-                    var body = as_statement_array_with_return(stat.alternative, ab);
                     stat.alternative = make_node(AST_BlockStatement, stat.alternative, {
-                        body: body
+                        body: new_else
                     });
                     statements[i] = stat.transform(compressor);
                     continue;
@@ -1125,7 +1169,11 @@ export function tighten_body(statements, compressor) {
         }
 
         function as_statement_array_with_return(node, ab) {
-            var body = as_statement_array(node).slice(0, -1);
+            var body = as_statement_array(node);
+            if (ab !== body[body.length - 1]) {
+                return undefined;
+            }
+            body = body.slice(0, -1);
             if (ab.value) {
                 body.push(make_node(AST_SimpleStatement, ab.value, {
                     body: ab.value.expression

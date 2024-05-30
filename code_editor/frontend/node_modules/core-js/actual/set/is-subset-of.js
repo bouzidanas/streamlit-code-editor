@@ -1,5 +1,5 @@
-require('../../modules/es.set');
+'use strict';
+var parent = require('../../stable/set/is-subset-of');
 require('../../modules/esnext.set.is-subset-of.v2');
-var entryUnbind = require('../../internals/entry-unbind');
 
-module.exports = entryUnbind('Set', 'isSubsetOf');
+module.exports = parent;

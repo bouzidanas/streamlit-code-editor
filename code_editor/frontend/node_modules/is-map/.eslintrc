@@ -2,14 +2,4 @@
 	"root": true,
 
 	"extends": "@ljharb",
-
-	"overrides": [
-		{
-			"files": "test/**",
-			"globals": {
-				"WeakMap": false,
-				"WeakSet": false,
-			},
-		},
-	],
 }

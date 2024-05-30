@@ -46,7 +46,7 @@ else:
 # `declare_component` and call it done. The wrapper allows us to customize
 # our component's API: we can pre-process its input args, post-process its
 # output value, and add a docstring for users.
-def code_editor(code, lang='python', theme="default", shortcuts="vscode", height=30, focus=False, allow_reset=False, replace_completer=False, response_mode="default", snippets=["", ""], completions=[], keybindings={}, buttons=[], menu={}, info={}, options={}, props={}, editor_props={}, component_props={}, key=None):
+def code_editor(code, lang='python', theme="default", shortcuts="vscode", height=30, focus=False, allow_reset=False, replace_completer=False, response_mode="default", ghost_text="", snippets=["", ""], completions=[], keybindings={}, buttons=[], menu={}, info={}, options={}, props={}, editor_props={}, component_props={}, key=None):
     """Create a new instance of "code_editor".
 
     Parameters
@@ -70,7 +70,7 @@ def code_editor(code, lang='python', theme="default", shortcuts="vscode", height
     #
     # "default" is a special argument that specifies the initial return
     # value of the component before the user has interacted with it.
-    component_value = _component_func(code=code, lang=lang, theme=theme, key=key, height=height, focus=focus, shortcuts=shortcuts, snippets=snippets, completions=completions, keybindings=keybindings, buttons=buttons, options=options, props=props, editor_props=editor_props, component_props=component_props, menu=menu, info=info, allow_reset=allow_reset, replace_completer=replace_completer, response_mode=response_mode, default={"id": "", "type": "", "lang": "", "text": "", "selected": "", "cursor": ""})
+    component_value = _component_func(code=code, lang=lang, theme=theme, key=key, height=height, focus=focus, shortcuts=shortcuts, snippets=snippets, completions=completions, keybindings=keybindings, buttons=buttons, options=options, props=props, editor_props=editor_props, component_props=component_props, menu=menu, info=info, allow_reset=allow_reset, replace_completer=replace_completer, response_mode=response_mode, ghost_text=ghost_text, default={"id": "", "type": "", "lang": "", "text": "", "selected": "", "cursor": ""})
 
     # We could modify the value returned from the component if we wanted.
     # There's no need to do this in our simple example - but it's an option.
@@ -172,7 +172,7 @@ if not _RELEASE:
     ace_props = {"style": {"borderRadius": "0px 0px 8px 8px"}}
 
     input = st.text_area("Input:", demo_sample_python_code, height=200)
-    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": False}, allow_reset=True, response_mode=["debounce", "blur", "select"], key="code_editor_demo")
+    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": wrap}, allow_reset=True, response_mode=["debounce", "blur"], key="code_editor_demo")
 
     st.write(response_dict)
 
@@ -183,5 +183,5 @@ if not _RELEASE:
     st.code(input, language=language)
     # st.write("You can find more examples in the [docs]()")
 
-    new_response = code_editor("print('Hello World!')", lang="python", height = 22, buttons=btn_settings_editor_btns, options={"wrap": False}, allow_reset=True, key="code_editor3")
+    new_response = code_editor("print('Hello World!')", lang="python", height = 22, buttons=btn_settings_editor_btns, options={"wrap": wrap}, allow_reset=True, key="code_editor3", ghost_text="Type your code here...", response_mode="debounce")
     st.write(new_response)

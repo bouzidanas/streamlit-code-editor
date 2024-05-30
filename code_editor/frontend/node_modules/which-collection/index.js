@@ -5,7 +5,8 @@ var isSet = require('is-set');
 var isWeakMap = require('is-weakmap');
 var isWeakSet = require('is-weakset');
 
-module.exports = function whichCollection(value) {
+/** @type {import('.')} */
+module.exports = function whichCollection(/** @type {unknown} */ value) {
 	if (value && typeof value === 'object') {
 		if (isMap(value)) {
 			return 'Map';

@@ -32,11 +32,11 @@ module.exports = !$assign || fails(function () {
   var A = {};
   var B = {};
   // eslint-disable-next-line es/no-symbol -- safe
-  var symbol = Symbol();
+  var symbol = Symbol('assign detection');
   var alphabet = 'abcdefghijklmnopqrst';
   A[symbol] = 7;
   alphabet.split('').forEach(function (chr) { B[chr] = chr; });
-  return $assign({}, A)[symbol] != 7 || objectKeys($assign({}, B)).join('') != alphabet;
+  return $assign({}, A)[symbol] !== 7 || objectKeys($assign({}, B)).join('') !== alphabet;
 }) ? function assign(target, source) { // eslint-disable-line no-unused-vars -- required for `.length`
   var T = toObject(target);
   var argumentsLength = arguments.length;

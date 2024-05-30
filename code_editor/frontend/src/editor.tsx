@@ -29,6 +29,7 @@ export type EditorProps = {
     props: any,
     editorRef: any,
     snippetString: string,
+    ghostText: string,
     commands: object[],
     completions: object[],
     keybindingString: string,
@@ -38,7 +39,7 @@ export type EditorProps = {
     onBlur: (event: any, editor?: any) => void
   }
   
-export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, completions, keybindingString, editorRef, code, replaceCompleter, onChange, onSelectionChange, onBlur }: EditorProps ) => {
+export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, completions, ghostText, keybindingString, editorRef, code, replaceCompleter, onChange, onSelectionChange, onBlur }: EditorProps ) => {
     
   let commandsList = useRef<object[]>(commands);
   useEffect(() => {
@@ -110,6 +111,17 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
     }
   }, [snippetString, keybindingString]);
 
+  useEffect(() => {
+    if(editorRef.current && ghostText !== ""){
+      const aceInline = ace.require("ace/autocomplete/inline").AceInline;
+      const inline = new aceInline();
+      const testCompletion: ace.Ace.Completion = {
+        snippet: ghostText,
+      }
+      const result = inline.show(editorRef.current.editor, testCompletion, "");
+      !result && inline.hide() && console.log("failed to show ghost text");
+    }
+  }, [ghostText, editorRef]);
 
   return (
           <AceEditor

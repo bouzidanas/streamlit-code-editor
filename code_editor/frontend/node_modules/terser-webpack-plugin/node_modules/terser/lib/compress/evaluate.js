@@ -133,7 +133,14 @@ def_eval(AST_Constant, function () {
     return this.getValue();
 });
 
-def_eval(AST_BigInt, return_this);
+const supports_bigint = typeof BigInt === "function";
+def_eval(AST_BigInt, function () {
+    if (supports_bigint) {
+        return BigInt(this.value);
+    } else {
+        return this;
+    }
+});
 
 def_eval(AST_RegExp, function (compressor) {
     let evaluated = compressor.evaluated_regexps.get(this.value);
@@ -257,7 +264,6 @@ def_eval(AST_Binary, function (compressor, depth) {
     var right = this.right._eval(compressor, depth);
     if (right === this.right)
         return this;
-    var result;
 
     if (left != null
         && right != null
@@ -269,6 +275,17 @@ def_eval(AST_Binary, function (compressor, depth) {
         return this;
     }
 
+    // Do not mix BigInt and Number; Don't use `>>>` on BigInt or `/ 0n`
+    if (
+        (typeof left === "bigint") !== (typeof right === "bigint")
+        || typeof left === "bigint"
+            && (this.operator === ">>>"
+                || this.operator === "/" && Number(right) === 0)
+    ) {
+        return this;
+    }
+
+    var result;
     switch (this.operator) {
         case "&&": result = left && right; break;
         case "||": result = left || right; break;
@@ -278,7 +295,7 @@ def_eval(AST_Binary, function (compressor, depth) {
         case "^": result = left ^ right; break;
         case "+": result = left + right; break;
         case "*": result = left * right; break;
-        case "**": result = Math.pow(left, right); break;
+        case "**": result = left ** right; break;
         case "/": result = left / right; break;
         case "%": result = left % right; break;
         case "-": result = left - right; break;
@@ -296,7 +313,7 @@ def_eval(AST_Binary, function (compressor, depth) {
         default:
             return this;
     }
-    if (isNaN(result) && compressor.find_parent(AST_With)) {
+    if (typeof result === "number" && isNaN(result) && compressor.find_parent(AST_With)) {
         // leave original expression as is
         return this;
     }
@@ -352,6 +369,25 @@ const regexp_flags = new Set([
 def_eval(AST_PropAccess, function (compressor, depth) {
     let obj = this.expression._eval(compressor, depth + 1);
     if (obj === nullish || (this.optional && obj == null)) return nullish;
+
+    // `.length` of strings and arrays is always safe
+    if (this.property === "length") {
+        if (typeof obj === "string") {
+            return obj.length;
+        }
+
+        const is_spreadless_array =
+            obj instanceof AST_Array
+            && obj.elements.every(el => !(el instanceof AST_Expansion));
+
+        if (
+            is_spreadless_array
+            && obj.elements.every(el => !el.has_side_effects(compressor))
+        ) {
+            return obj.elements.length;
+        }
+    }
+
     if (compressor.option("unsafe")) {
         var key = this.property;
         if (key instanceof AST_Node) {
@@ -359,9 +395,9 @@ def_eval(AST_PropAccess, function (compressor, depth) {
             if (key === this.property)
                 return this;
         }
+
         var exp = this.expression;
         if (is_undeclared_ref(exp)) {
-
             var aa;
             var first_arg = exp.name === "hasOwnProperty"
                 && key === "call"

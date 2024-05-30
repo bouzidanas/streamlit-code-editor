@@ -1,3 +1,4 @@
+'use strict';
 var DESCRIPTORS = require('../internals/descriptors');
 var fails = require('../internals/fails');
 
@@ -8,5 +9,5 @@ module.exports = DESCRIPTORS && fails(function () {
   return Object.defineProperty(function () { /* empty */ }, 'prototype', {
     value: 42,
     writable: false
-  }).prototype != 42;
+  }).prototype !== 42;
 });

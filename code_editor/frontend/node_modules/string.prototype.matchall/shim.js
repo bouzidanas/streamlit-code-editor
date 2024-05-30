@@ -2,11 +2,12 @@
 
 var define = require('define-properties');
 var hasSymbols = require('has-symbols')();
+var gOPD = require('gopd');
+
 var getPolyfill = require('./polyfill');
 var regexpMatchAllPolyfill = require('./polyfill-regexp-matchall');
 
 var defineP = Object.defineProperty;
-var gOPD = Object.getOwnPropertyDescriptor;
 
 module.exports = function shimMatchAll() {
 	var polyfill = getPolyfill();

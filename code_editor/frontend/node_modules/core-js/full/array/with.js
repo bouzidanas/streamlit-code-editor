@@ -1,4 +1,4 @@
-require('../../modules/esnext.array.with');
-var entryUnbind = require('../../internals/entry-unbind');
+'use strict';
+var parent = require('../../actual/array/with');
 
-module.exports = entryUnbind('Array', 'with');
+module.exports = parent;

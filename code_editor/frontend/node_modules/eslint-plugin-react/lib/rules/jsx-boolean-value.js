@@ -21,25 +21,12 @@ const exceptionsSchema = {
 const ALWAYS = 'always';
 const NEVER = 'never';
 
-const errorData = new WeakMap();
-/**
- * @param {object} exceptions
- * @returns {object}
- */
-function getErrorData(exceptions) {
-  if (!errorData.has(exceptions)) {
-    const exceptionProps = Array.from(exceptions, (name) => `\`${name}\``).join(', ');
-    const exceptionsMessage = exceptions.size > 0 ? ` for the following props: ${exceptionProps}` : '';
-    errorData.set(exceptions, { exceptionsMessage });
-  }
-  return errorData.get(exceptions);
-}
 /**
  * @param {string} configuration
  * @param {Set<string>} exceptions
  * @param {string} propName
  * @returns {boolean} propName
-*/
+ */
 function isAlways(configuration, exceptions, propName) {
   const isException = exceptions.has(propName);
   if (configuration === ALWAYS) {
@@ -62,12 +49,12 @@ function isNever(configuration, exceptions, propName) {
 }
 
 const messages = {
-  omitBoolean: 'Value must be omitted for boolean attributes{{exceptionsMessage}}',
-  omitBoolean_noMessage: 'Value must be omitted for boolean attributes',
-  setBoolean: 'Value must be set for boolean attributes{{exceptionsMessage}}',
-  setBoolean_noMessage: 'Value must be set for boolean attributes',
+  omitBoolean: 'Value must be omitted for boolean attribute `{{propName}}`',
+  setBoolean: 'Value must be set for boolean attribute `{{propName}}`',
+  omitPropAndBoolean: 'Value must be omitted for `false` attribute: `{{propName}}`',
 };
 
+/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     docs: {
@@ -94,6 +81,9 @@ module.exports = {
           additionalProperties: false,
           properties: {
             [NEVER]: exceptionsSchema,
+            assumeUndefinedIsFalse: {
+              type: 'boolean',
+            },
           },
         }],
         additionalItems: false,
@@ -106,6 +96,9 @@ module.exports = {
           additionalProperties: false,
           properties: {
             [ALWAYS]: exceptionsSchema,
+            assumeUndefinedIsFalse: {
+              type: 'boolean',
+            },
           },
         }],
         additionalItems: false,
@@ -127,8 +120,8 @@ module.exports = {
           isAlways(configuration, exceptions, propName)
           && value === null
         ) {
-          const data = getErrorData(exceptions);
-          const messageId = data.exceptionsMessage ? 'setBoolean' : 'setBoolean_noMessage';
+          const messageId = 'setBoolean';
+          const data = { propName };
           report(context, messages[messageId], messageId, {
             node,
             data,
@@ -139,17 +132,35 @@ module.exports = {
         }
         if (
           isNever(configuration, exceptions, propName)
+          && !configObject.assumeUndefinedIsFalse
           && value
           && value.type === 'JSXExpressionContainer'
           && value.expression.value === true
         ) {
-          const data = getErrorData(exceptions);
-          const messageId = data.exceptionsMessage ? 'omitBoolean' : 'omitBoolean_noMessage';
+          const messageId = 'omitBoolean';
+          const data = { propName };
           report(context, messages[messageId], messageId, {
             node,
             data,
             fix(fixer) {
               return fixer.removeRange([node.name.range[1], value.range[1]]);
+            },
+          });
+        }
+        if (
+          isNever(configuration, exceptions, propName)
+          && configObject.assumeUndefinedIsFalse
+          && value
+          && value.type === 'JSXExpressionContainer'
+          && value.expression.value === false
+        ) {
+          const messageId = 'omitPropAndBoolean';
+          const data = { propName };
+          report(context, messages[messageId], messageId, {
+            node,
+            data,
+            fix(fixer) {
+              return fixer.removeRange([node.name.range[0], value.range[1]]);
             },
           });
         }

@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.0.3](https://github.com/inspect-js/is-set/compare/v2.0.2...v2.0.3) - 2024-03-08
+
+### Commits
+
+- [actions] reuse common workflows [`9d26ac6`](https://github.com/inspect-js/is-set/commit/9d26ac673752d89ba855a50616d36f09d49d6113)
+- [actions] use `node/install` instead of `node/run`; use `codecov` action [`3c91325`](https://github.com/inspect-js/is-set/commit/3c91325782b9dac5a602e150cd007e51029930f9)
+- add types [`8fcc646`](https://github.com/inspect-js/is-set/commit/8fcc646ba3befa5448f987c7c12e0863443c9533)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `object-inspect`, `safe-publish-latest`, `tape` [`91caa24`](https://github.com/inspect-js/is-set/commit/91caa24511234e8f105f4534b681abdb2139b650)
+- [readme] update URLs [`130e57b`](https://github.com/inspect-js/is-set/commit/130e57bc4d6386bd500d6886b9f094dd201cb88b)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `auto-changelog`, `es5-shim`, `object-inspect`, `tape` [`4d75ee2`](https://github.com/inspect-js/is-set/commit/4d75ee27c0351999ba3093d519c12dc8bc0ff0ee)
+- [actions] remove redundant finisher [`052fdce`](https://github.com/inspect-js/is-set/commit/052fdce2ee22fe49186c4d848063600f0c3f968d)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `auto-changelog`, `core-js`, `es5-shim`, `object-inspect`, `safe-publish-latest`, `tape` [`eb31797`](https://github.com/inspect-js/is-set/commit/eb317975ea6240cc2dc043db9e4a837b00f82ffc)
+- [actions] update rebase action to use reusable workflow [`8c478ba`](https://github.com/inspect-js/is-set/commit/8c478ba28881beb9f07650e409f6ef7df4a92455)
+- [actions] update codecov uploader [`a0dac6b`](https://github.com/inspect-js/is-set/commit/a0dac6b9abb0c5a3eff6849cca4ba7f1c0c8dc17)
+- [Dev Deps] update `@ljharb/eslint-config`, `aud`, `es6-shim`, `object-inspect`, `tape` [`28d75a3`](https://github.com/inspect-js/is-set/commit/28d75a3ecb22235593b43e32505b90578da0dfab)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `object-inspect`, `tape` [`7b2a4a7`](https://github.com/inspect-js/is-set/commit/7b2a4a75bae0f1a9163a83ac8760f10cfbcdb001)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `es5-shim`, `tape` [`20ce047`](https://github.com/inspect-js/is-set/commit/20ce04714d7be5fbee40c757e2ba7194e248c1a2)
+- [readme] add actions and codecov badges [`e6e1796`](https://github.com/inspect-js/is-set/commit/e6e1796da1700594a3988466762405462f082cda)
+- [meta] add missing `engines.node` [`9ed19af`](https://github.com/inspect-js/is-set/commit/9ed19afb98ad26e29378c2a7f1c82359d5c5a809)
+- [meta] use `prepublishOnly` script for npm 7+ [`618f861`](https://github.com/inspect-js/is-set/commit/618f86128277814075fe56f7a69a272c31a48f85)
+- [readme] remove dead badges [`76e890e`](https://github.com/inspect-js/is-set/commit/76e890ea165c6cb9088604ea010968d5e3e877c6)
+- [meta] add `sideEffects` flag [`e21859b`](https://github.com/inspect-js/is-set/commit/e21859bb58bd5aafb907fe53045ec3bc14d07449)
+
 ## [v2.0.2](https://github.com/inspect-js/is-set/compare/v2.0.1...v2.0.2) - 2020-12-13
 
 ### Commits

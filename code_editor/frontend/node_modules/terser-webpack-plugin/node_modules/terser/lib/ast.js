@@ -111,6 +111,14 @@ class AST_Token {
         Object.seal(this);
     }
 
+    // Return a string summary of the token for node.js console.log
+    [Symbol.for("nodejs.util.inspect.custom")](_depth, options) {
+        const special = str => options.stylize(str, "special");
+        const quote = typeof this.value === "string" && this.value.includes("`") ? "'" : "`";
+        const value = `${quote}${this.value}${quote}`;
+        return `${special("[AST_Token")} ${value} at ${this.line}:${this.col}${special("]")}`;
+    }
+
     get nlb() {
         return has_tok_flag(this, TOK_FLAG_NLB);
     }
@@ -897,11 +905,14 @@ var AST_Destructuring = DEFNODE("Destructuring", "names is_array", function AST_
     },
     all_symbols: function() {
         var out = [];
-        this.walk(new TreeWalker(function (node) {
-            if (node instanceof AST_Symbol) {
+        walk(this, node => {
+            if (node instanceof AST_SymbolDeclaration) {
                 out.push(node);
             }
-        }));
+            if (node instanceof AST_Lambda) {
+                return true;
+            }
+        });
         return out;
     }
 });
@@ -1257,12 +1268,11 @@ var AST_Case = DEFNODE("Case", "expression", function AST_Case(props) {
 
 /* -----[ EXCEPTIONS ]----- */
 
-var AST_Try = DEFNODE("Try", "bcatch bfinally", function AST_Try(props) {
+var AST_Try = DEFNODE("Try", "body bcatch bfinally", function AST_Try(props) {
     if (props) {
+        this.body = props.body;
         this.bcatch = props.bcatch;
         this.bfinally = props.bfinally;
-        this.body = props.body;
-        this.block_scope = props.block_scope;
         this.start = props.start;
         this.end = props.end;
     }
@@ -1271,12 +1281,13 @@ var AST_Try = DEFNODE("Try", "bcatch bfinally", function AST_Try(props) {
 }, {
     $documentation: "A `try` statement",
     $propdoc: {
+        body: "[AST_TryBlock] the try block",
         bcatch: "[AST_Catch?] the catch block, or null if not present",
         bfinally: "[AST_Finally?] the finally block, or null if not present"
     },
     _walk: function(visitor) {
         return visitor._visit(this, function() {
-            walk_body(this, visitor);
+            this.body._walk(visitor);
             if (this.bcatch) this.bcatch._walk(visitor);
             if (this.bfinally) this.bfinally._walk(visitor);
         });
@@ -1284,9 +1295,21 @@ var AST_Try = DEFNODE("Try", "bcatch bfinally", function AST_Try(props) {
     _children_backwards(push) {
         if (this.bfinally) push(this.bfinally);
         if (this.bcatch) push(this.bcatch);
-        let i = this.body.length;
-        while (i--) push(this.body[i]);
+        push(this.body);
     },
+}, AST_Statement);
+
+var AST_TryBlock = DEFNODE("TryBlock", null, function AST_TryBlock(props) {
+    if (props) {
+        this.body = props.body;
+        this.block_scope = props.block_scope;
+        this.start = props.start;
+        this.end = props.end;
+    }
+
+    this.flags = 0;
+}, {
+    $documentation: "The `try` block of a try statement"
 }, AST_Block);
 
 var AST_Catch = DEFNODE("Catch", "argname", function AST_Catch(props) {
@@ -1420,6 +1443,13 @@ var AST_VarDef = DEFNODE("VarDef", "name value", function AST_VarDef(props) {
         if (this.value) push(this.value);
         push(this.name);
     },
+    declarations_as_names() {
+        if (this.name instanceof AST_SymbolDeclaration) {
+            return [this];
+        } else {
+            return this.name.all_symbols();
+        }
+    }
 });
 
 var AST_NameMapping = DEFNODE("NameMapping", "foreign_name name", function AST_NameMapping(props) {
@@ -1684,6 +1714,7 @@ var AST_Dot = DEFNODE("Dot", "quote", function AST_Dot(props) {
         this.expression = props.expression;
         this.property = props.property;
         this.optional = props.optional;
+        this._annotations = props._annotations;
         this.start = props.start;
         this.end = props.end;
     }
@@ -1731,6 +1762,7 @@ var AST_Sub = DEFNODE("Sub", null, function AST_Sub(props) {
         this.expression = props.expression;
         this.property = props.property;
         this.optional = props.optional;
+        this._annotations = props._annotations;
         this.start = props.start;
         this.end = props.end;
     }
@@ -1983,6 +2015,7 @@ var AST_ObjectProperty = DEFNODE("ObjectProperty", "key value", function AST_Obj
         this.value = props.value;
         this.start = props.start;
         this.end = props.end;
+        this._annotations = props._annotations;
     }
 
     this.flags = 0;
@@ -2012,6 +2045,7 @@ var AST_ObjectKeyVal = DEFNODE("ObjectKeyVal", "quote", function AST_ObjectKeyVa
         this.value = props.value;
         this.start = props.start;
         this.end = props.end;
+        this._annotations = props._annotations;
     }
 
     this.flags = 0;
@@ -2073,6 +2107,7 @@ var AST_ObjectSetter = DEFNODE("ObjectSetter", "quote static", function AST_Obje
         this.value = props.value;
         this.start = props.start;
         this.end = props.end;
+        this._annotations = props._annotations;
     }
 
     this.flags = 0;
@@ -2095,6 +2130,7 @@ var AST_ObjectGetter = DEFNODE("ObjectGetter", "quote static", function AST_Obje
         this.value = props.value;
         this.start = props.start;
         this.end = props.end;
+        this._annotations = props._annotations;
     }
 
     this.flags = 0;
@@ -2122,6 +2158,7 @@ var AST_ConciseMethod = DEFNODE(
             this.value = props.value;
             this.start = props.start;
             this.end = props.end;
+            this._annotations = props._annotations;
         }
 
         this.flags = 0;
@@ -2200,6 +2237,58 @@ var AST_Class = DEFNODE("Class", "name extends properties", function AST_Class(p
         if (this.extends) push(this.extends);
         if (this.name) push(this.name);
     },
+    /** go through the bits that are executed instantly, not when the class is `new`'d. Doesn't walk the name. */
+    visit_nondeferred_class_parts(visitor) {
+        if (this.extends) {
+            this.extends._walk(visitor);
+        }
+        this.properties.forEach((prop) => {
+            if (prop instanceof AST_ClassStaticBlock) {
+                prop._walk(visitor);
+                return;
+            }
+            if (prop.computed_key()) {
+                visitor.push(prop);
+                prop.key._walk(visitor);
+                visitor.pop();
+            }
+            if ((prop instanceof AST_ClassPrivateProperty || prop instanceof AST_ClassProperty) && prop.static && prop.value) {
+                visitor.push(prop);
+                prop.value._walk(visitor);
+                visitor.pop();
+            }
+        });
+    },
+    /** go through the bits that are executed later, when the class is `new`'d or a static method is called */
+    visit_deferred_class_parts(visitor) {
+        this.properties.forEach((prop) => {
+            if (prop instanceof AST_ConciseMethod) {
+                prop.walk(visitor);
+            } else if (prop instanceof AST_ClassProperty && !prop.static && prop.value) {
+                visitor.push(prop);
+                prop.value._walk(visitor);
+                visitor.pop();
+            }
+        });
+    },
+    is_self_referential: function() {
+        const this_id = this.name && this.name.definition().id;
+        let found = false;
+        let class_this = true;
+        this.visit_nondeferred_class_parts(new TreeWalker((node, descend) => {
+            if (found) return true;
+            if (node instanceof AST_This) return (found = class_this);
+            if (node instanceof AST_SymbolRef) return (found = node.definition().id === this_id);
+            if (node instanceof AST_Lambda && !(node instanceof AST_Arrow)) {
+                const class_this_save = class_this;
+                class_this = false;
+                descend();
+                class_this = class_this_save;
+                return true;
+            }
+        }));
+        return found;
+    },
 }, AST_Scope /* TODO a class might have a scope but it's not a scope */);
 
 var AST_ClassProperty = DEFNODE("ClassProperty", "static quote", function AST_ClassProperty(props) {
@@ -2210,6 +2299,7 @@ var AST_ClassProperty = DEFNODE("ClassProperty", "static quote", function AST_Cl
         this.value = props.value;
         this.start = props.start;
         this.end = props.end;
+        this._annotations = props._annotations;
     }
 
     this.flags = 0;
@@ -2316,6 +2406,7 @@ var AST_ClassStaticBlock = DEFNODE("ClassStaticBlock", "body block_scope", funct
         while (i--) push(this.body[i]);
     },
     clone: clone_block_scope,
+    computed_key: () => false
 }, AST_Scope);
 
 var AST_ClassExpression = DEFNODE("ClassExpression", null, function AST_ClassExpression(props) {
@@ -2742,6 +2833,7 @@ var AST_String = DEFNODE("String", "value quote", function AST_String(props) {
         this.quote = props.quote;
         this.start = props.start;
         this.end = props.end;
+        this._annotations = props._annotations;
     }
 
     this.flags = 0;
@@ -3111,9 +3203,11 @@ class TreeTransformer extends TreeWalker {
     }
 }
 
-const _PURE     = 0b00000001;
-const _INLINE   = 0b00000010;
-const _NOINLINE = 0b00000100;
+const _PURE       = 0b00000001;
+const _INLINE     = 0b00000010;
+const _NOINLINE   = 0b00000100;
+const _KEY        = 0b00001000;
+const _MANGLEPROP = 0b00010000;
 
 export {
     AST_Accessor,
@@ -3235,6 +3329,7 @@ export {
     AST_Toplevel,
     AST_True,
     AST_Try,
+    AST_TryBlock,
     AST_Unary,
     AST_UnaryPostfix,
     AST_UnaryPrefix,
@@ -3257,4 +3352,6 @@ export {
     _INLINE,
     _NOINLINE,
     _PURE,
+    _KEY,
+    _MANGLEPROP,
 };

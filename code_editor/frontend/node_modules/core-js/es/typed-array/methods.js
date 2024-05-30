@@ -1,3 +1,4 @@
+'use strict';
 require('../../modules/es.object.to-string');
 require('../../modules/es.string.iterator');
 require('../../modules/es.typed-array.from');
@@ -27,4 +28,7 @@ require('../../modules/es.typed-array.sort');
 require('../../modules/es.typed-array.subarray');
 require('../../modules/es.typed-array.to-locale-string');
 require('../../modules/es.typed-array.to-string');
+require('../../modules/es.typed-array.to-reversed');
+require('../../modules/es.typed-array.to-sorted');
+require('../../modules/es.typed-array.with');
 require('../../modules/es.typed-array.iterator');

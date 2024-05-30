@@ -151,6 +151,7 @@ import {
     AST_Toplevel,
     AST_True,
     AST_Try,
+    AST_TryBlock,
     AST_Unary,
     AST_UnaryPostfix,
     AST_UnaryPrefix,
@@ -165,17 +166,15 @@ import { is_basic_identifier_string } from "./parse.js";
 (function() {
 
     var normalize_directives = function(body) {
-        var in_directive = true;
-
         for (var i = 0; i < body.length; i++) {
-            if (in_directive && body[i] instanceof AST_Statement && body[i].body instanceof AST_String) {
+            if (body[i] instanceof AST_Statement && body[i].body instanceof AST_String) {
                 body[i] = new AST_Directive({
                     start: body[i].start,
                     end: body[i].end,
                     value: body[i].body.value
                 });
-            } else if (in_directive && !(body[i] instanceof AST_Statement && body[i].body instanceof AST_String)) {
-                in_directive = false;
+            } else {
+                return body;
             }
         }
 
@@ -344,7 +343,7 @@ import { is_basic_identifier_string } from "./parse.js";
             return new AST_Try({
                 start    : my_start_token(M),
                 end      : my_end_token(M),
-                body     : from_moz(M.block).body,
+                body     : new AST_TryBlock(from_moz(M.block)),
                 bcatch   : from_moz(handlers[0]),
                 bfinally : M.finalizer ? new AST_Finally(from_moz(M.finalizer)) : null
             });
@@ -394,22 +393,25 @@ import { is_basic_identifier_string } from "./parse.js";
         },
 
         MethodDefinition: function(M) {
+            const is_private = M.key.type === "PrivateIdentifier";
+            const key = M.computed ? from_moz(M.key) : new AST_SymbolMethod({ name: M.key.name || M.key.value });
+
             var args = {
                 start    : my_start_token(M),
                 end      : my_end_token(M),
-                key      : M.computed ? from_moz(M.key) : new AST_SymbolMethod({ name: M.key.name || M.key.value }),
+                key,
                 value    : from_moz(M.value),
                 static   : M.static,
             };
             if (M.kind == "get") {
-                return new AST_ObjectGetter(args);
+                return new (is_private ? AST_PrivateGetter : AST_ObjectGetter)(args);
             }
             if (M.kind == "set") {
-                return new AST_ObjectSetter(args);
+                return new (is_private ? AST_PrivateSetter : AST_ObjectSetter)(args);
             }
             args.is_generator = M.value.generator;
             args.async = M.value.async;
-            return new AST_ConciseMethod(args);
+            return new (is_private ? AST_PrivateMethod : AST_ConciseMethod)(args);
         },
 
         FieldDefinition: function(M) {
@@ -433,8 +435,16 @@ import { is_basic_identifier_string } from "./parse.js";
             let key;
             if (M.computed) {
                 key = from_moz(M.key);
+            } else if (M.key.type === "PrivateIdentifier") {
+                return new AST_ClassPrivateProperty({
+                    start    : my_start_token(M),
+                    end      : my_end_token(M),
+                    key      : from_moz(M.key),
+                    value    : from_moz(M.value),
+                    static   : M.static,
+                });
             } else {
-                if (M.key.type !== "Identifier" && M.key.type !== "PrivateIdentifier") {
+                if (M.key.type !== "Identifier") {
                     throw new Error("Non-Identifier key in PropertyDefinition");
                 }
                 key = from_moz(M.key);
@@ -446,6 +456,14 @@ import { is_basic_identifier_string } from "./parse.js";
                 key,
                 value    : from_moz(M.value),
                 static   : M.static,
+            });
+        },
+
+        PrivateIdentifier: function (M) {
+            return new AST_SymbolPrivateProperty({
+                start: my_start_token(M),
+                end: my_end_token(M),
+                name: M.name
             });
         },
 
@@ -490,6 +508,15 @@ import { is_basic_identifier_string } from "./parse.js";
         },
 
         MemberExpression: function(M) {
+            if (M.property.type === "PrivateIdentifier") {
+                return new AST_DotHash({
+                    start      : my_start_token(M),
+                    end        : my_end_token(M),
+                    property   : M.property.name,
+                    expression : from_moz(M.object),
+                    optional   : M.optional || false
+                });
+            }
             return new (M.computed ? AST_Sub : AST_Dot)({
                 start      : my_start_token(M),
                 end        : my_end_token(M),
@@ -591,9 +618,7 @@ import { is_basic_identifier_string } from "./parse.js";
                 start: my_start_token(M),
                 end: my_end_token(M),
                 exported_definition: from_moz(M.declaration),
-                exported_names: M.specifiers && M.specifiers.length ? M.specifiers.map(function (specifier) {
-                    return from_moz(specifier);
-                }) : null,
+                exported_names: M.specifiers && M.specifiers.length ? M.specifiers.map(from_moz) : null,
                 module_name: from_moz(M.source),
                 assert_clause: assert_clause_from_moz(M.assertions)
             });
@@ -1315,7 +1340,7 @@ import { is_basic_identifier_string } from "./parse.js";
     def_to_moz(AST_Try, function To_Moz_TryStatement(M) {
         return {
             type: "TryStatement",
-            block: to_moz_block(M),
+            block: to_moz_block(M.body),
             handler: to_moz(M.bcatch),
             guardedHandlers: [],
             finalizer: to_moz(M.bfinally)

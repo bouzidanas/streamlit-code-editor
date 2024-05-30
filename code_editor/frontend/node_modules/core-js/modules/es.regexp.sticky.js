@@ -1,3 +1,4 @@
+'use strict';
 var DESCRIPTORS = require('../internals/descriptors');
 var MISSED_STICKY = require('../internals/regexp-sticky-helpers').MISSED_STICKY;
 var classof = require('../internals/classof-raw');
@@ -19,7 +20,7 @@ if (DESCRIPTORS && MISSED_STICKY) {
       if (classof(this) === 'RegExp') {
         return !!getInternalState(this).sticky;
       }
-      throw $TypeError('Incompatible receiver, RegExp required');
+      throw new $TypeError('Incompatible receiver, RegExp required');
     }
   });
 }

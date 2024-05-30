@@ -4,6 +4,9 @@
 
 'use strict';
 
+const iterFrom = require('es-iterator-helpers/Iterator.from');
+const map = require('es-iterator-helpers/Iterator.prototype.map');
+
 /** TODO: type {(string | { name: string, linkAttribute: string })[]} */
 /** @type {any} */
 const DEFAULT_LINK_COMPONENTS = ['a'];
@@ -19,11 +22,11 @@ function getFormComponents(context) {
   const formComponents = /** @type {typeof DEFAULT_FORM_COMPONENTS} */ (
     DEFAULT_FORM_COMPONENTS.concat(settings.formComponents || [])
   );
-  return new Map(formComponents.map((value) => {
+  return new Map(map(iterFrom(formComponents), (value) => {
     if (typeof value === 'string') {
-      return [value, DEFAULT_FORM_ATTRIBUTE];
+      return [value, [DEFAULT_FORM_ATTRIBUTE]];
     }
-    return [value.name, value.formAttribute];
+    return [value.name, [].concat(value.formAttribute)];
   }));
 }
 
@@ -32,11 +35,11 @@ function getLinkComponents(context) {
   const linkComponents = /** @type {typeof DEFAULT_LINK_COMPONENTS} */ (
     DEFAULT_LINK_COMPONENTS.concat(settings.linkComponents || [])
   );
-  return new Map(linkComponents.map((value) => {
+  return new Map(map(iterFrom(linkComponents), (value) => {
     if (typeof value === 'string') {
-      return [value, DEFAULT_LINK_ATTRIBUTE];
+      return [value, [DEFAULT_LINK_ATTRIBUTE]];
     }
-    return [value.name, value.linkAttribute];
+    return [value.name, [].concat(value.linkAttribute)];
   }));
 }
 

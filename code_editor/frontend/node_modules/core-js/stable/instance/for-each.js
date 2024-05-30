@@ -1,8 +1,9 @@
-require('../../modules/web.dom-collections.iterator');
+'use strict';
 var classof = require('../../internals/classof');
 var hasOwn = require('../../internals/has-own-property');
 var isPrototypeOf = require('../../internals/object-is-prototype-of');
 var method = require('../array/virtual/for-each');
+require('../../modules/web.dom-collections.for-each');
 
 var ArrayPrototype = Array.prototype;
 

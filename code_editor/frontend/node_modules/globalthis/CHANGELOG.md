@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.4](https://github.com/es-shims/globalThis/compare/v1.0.3...v1.0.4) - 2024-04-29
+
+### Commits
+
+- [actions] remove redundant finisher [`280d796`](https://github.com/es-shims/globalThis/commit/280d796f7cd61da47c026d8ec8dd88015d4ed95f)
+- [Refactor] use `gopd` [`0209ccb`](https://github.com/es-shims/globalThis/commit/0209ccb2cd95b785e7e8868fab035cdc87216b58)
+- [actions] update rebase action to use reusable workflow [`c08aea6`](https://github.com/es-shims/globalThis/commit/c08aea6240c3747cbc3e5f4d7c3eb740ec4f0627)
+- [Dev Deps] update `@es-shims/api`, `@ljharb/eslint-config`, `aud`, `tape` [`f38f2af`](https://github.com/es-shims/globalThis/commit/f38f2af14797abbe466b428f0ce74843c43746d7)
+- [Dev Deps] update `aud`, `tape` [`a1be102`](https://github.com/es-shims/globalThis/commit/a1be102c91da38830a45804de6a0582f752fe53f)
+- [Deps] update `define-properties` [`3e41644`](https://github.com/es-shims/globalThis/commit/3e416444f87350a6df70bf778e95eb713c3011e6)
+- [Deps] update `define-properties` [`3d81f70`](https://github.com/es-shims/globalThis/commit/3d81f7048ce35285e3e719b1f53fba02516e9811)
+- [Dev Deps] add missing `npmignore` dep [`c2d00f7`](https://github.com/es-shims/globalThis/commit/c2d00f70d4c11cb2f035c398cb560db9677b6dc6)
+
 ## [v1.0.3](https://github.com/es-shims/globalThis/compare/v1.0.2...v1.0.3) - 2022-05-07
 
 ### Commits

@@ -11,18 +11,19 @@ var getIteratorDirect = require('../internals/get-iterator-direct');
 var closeAsyncIteration = require('../internals/async-iterator-close');
 
 var createMethod = function (TYPE) {
-  var IS_TO_ARRAY = TYPE == 0;
-  var IS_FOR_EACH = TYPE == 1;
-  var IS_EVERY = TYPE == 2;
-  var IS_SOME = TYPE == 3;
+  var IS_TO_ARRAY = TYPE === 0;
+  var IS_FOR_EACH = TYPE === 1;
+  var IS_EVERY = TYPE === 2;
+  var IS_SOME = TYPE === 3;
   return function (object, fn, target) {
+    anObject(object);
+    var MAPPING = fn !== undefined;
+    if (MAPPING || !IS_TO_ARRAY) aCallable(fn);
     var record = getIteratorDirect(object);
     var Promise = getBuiltIn('Promise');
     var iterator = record.iterator;
     var next = record.next;
     var counter = 0;
-    var MAPPING = fn !== undefined;
-    if (MAPPING || !IS_TO_ARRAY) aCallable(fn);
 
     return new Promise(function (resolve, reject) {
       var ifAbruptCloseAsyncIterator = function (error) {

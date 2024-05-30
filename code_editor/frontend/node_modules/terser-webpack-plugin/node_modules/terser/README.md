@@ -52,7 +52,9 @@ From NPM for programmatic use:
 
 <!-- CLI_USAGE:START -->
 
-    terser [input files] [options]
+```
+terser [input files] [options]
+```
 
 Terser can take multiple input files.  It's recommended that you pass the
 input files first, then pass the options.  Terser will parse input files
@@ -106,6 +108,7 @@ a double dash to prevent input files being used as option arguments:
                                                `strict` disables quoted properties
                                                being automatically reserved.
                                 `regex`  Only mangle matched property names.
+                                `only_annotated` Only mangle properties defined with /*@__MANGLE_PROP__*/.
                                 `reserved`  List of names that should not be mangled.
     -f, --format [options]      Specify format options.
                                 `preamble`  Preamble to prepend to the output. You
@@ -151,7 +154,8 @@ a double dash to prevent input files being used as option arguments:
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
     --module                    Input is an ES6 module. If `compress` or `mangle` is
-                                enabled then the `toplevel` option will be enabled.
+                                enabled then the `toplevel` option, as well as strict mode,
+                                will be enabled.
     --name-cache <file>         File to hold mangled name mappings.
     --safari10                  Support non-standard Safari 10/11.
                                 Equivalent to setting `safari10: true` in `minify()`
@@ -414,13 +418,13 @@ Or,
 import { minify } from "terser";
 ```
 
-Browser loading is also supported:
+Browser loading is also supported. It exposes a global variable `Terser` containing a `.minify` property:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/source-map@0.7.3/dist/source-map.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/terser/dist/bundle.min.js"></script>
 ```
 
-There is a single async high level function, **`async minify(code, options)`**,
+There is an async high level function, **`async minify(code, options)`**,
 which will perform all minification [phases](#minify-options) in a configurable
 manner. By default `minify()` will enable [`compress`](#compress-options)
 and [`mangle`](#mangle-options). Example:
@@ -430,6 +434,8 @@ var result = await minify(code, { sourceMap: true });
 console.log(result.code);  // minified output: function add(n,d){return n+d}
 console.log(result.map);  // source map
 ```
+
+There is also a `minify_sync()` alternative version of it, which returns instantly.
 
 You can `minify` more than one JavaScript file at a time by using an object
 for the first argument where the keys are file names and the values are source
@@ -673,6 +679,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 If you happen to need the source map as a raw object, set `sourceMap.asObject` to `true`.
 
+<!-- API_REFERENCE:END -->
+
+<!-- OPTIONS:START -->
+
 ## Parse options
 
 - `bare_returns` (default `false`) -- support top level `return` statements
@@ -708,7 +718,8 @@ If you happen to need the source map as a raw object, set `sourceMap.asObject` t
 
 - `comparisons` (default: `true`) -- apply certain optimizations to binary nodes,
   e.g. `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
-  nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
+  nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc. Note: `comparisons`
+  works best with `lhs_constants` enabled.
 
 - `computed_props` (default: `true`) -- Transforms constant computed properties
   into regular ones: `{["computed"]: 1}` is converted to `{computed: 1}`.
@@ -721,9 +732,8 @@ If you happen to need the source map as a raw object, set `sourceMap.asObject` t
 - `directives` (default: `true`) -- remove redundant or non-standard directives
 
 - `drop_console` (default: `false`) -- Pass `true` to discard calls to
-  `console.*` functions. If you wish to drop a specific function call
-  such as `console.info` and/or retain side effects from function arguments
-  after dropping the function call then use `pure_funcs` instead.
+  `console.*` functions. If you only want to discard a portion of console, 
+   you can pass an array like this `['log', 'info']`, which will only discard `console.log`、 `console.info`.
 
 - `drop_debugger` (default: `true`) -- remove `debugger;` statements
 
@@ -775,6 +785,9 @@ If you happen to need the source map as a raw object, set `sourceMap.asObject` t
 - `keep_infinity` (default: `false`) -- Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
+- `lhs_constants` (default: `true`) -- Moves constant values to the left-hand side
+  of binary nodes. `foo == 42 → 42 == foo`
+
 - `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops
   when we can statically determine the condition.
 
@@ -808,6 +821,9 @@ If you happen to need the source map as a raw object, set `sourceMap.asObject` t
   (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
   Specify `"strict"` to treat `foo.bar` as side-effect-free only when
   `foo` is certain to not throw, i.e. not `null` or `undefined`.
+
+- `pure_new` (default: `false`) -- Set to `true` to assume `new X()` never has
+  side effects.
 
 - `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
   used as constant values.
@@ -902,7 +918,7 @@ If you happen to need the source map as a raw object, set `sourceMap.asObject` t
   [compress option](#compress-options).
 
 - `module` (default `false`) -- Pass `true` an ES6 modules, where the toplevel
-  scope is not the global scope. Implies `toplevel`.
+  scope is not the global scope. Implies `toplevel` and assumes input code is strict mode JS.
 
 - `nth_identifier` (default: an internal mangler that weights based on character
   frequency analysis) -- Pass an object with a `get(n)` function that converts an
@@ -1057,7 +1073,13 @@ as "output options".
   function expressions that are passed as arguments, in parenthesis. See
   [OptimizeJS](https://github.com/nolanlawson/optimize-js) for more details.
 
+
+<!-- OPTIONS:END -->
+
+
 # Miscellaneous
+
+<!-- MISCELLANEOUS:START -->
 
 ### Keeping copyright notices or other comments
 
@@ -1184,6 +1206,8 @@ Annotations in Terser are a way to tell it to treat a certain function call diff
  * `/*@__INLINE__*/` - forces a function to be inlined somewhere.
  * `/*@__NOINLINE__*/` - Makes sure the called function is not inlined into the call site.
  * `/*@__PURE__*/` - Marks a function call as pure. That means, it can safely be dropped.
+ * `/*@__KEY__*/` - Marks a string literal as a property to also mangle it when mangling properties.
+ * `/*@__MANGLE_PROP__*/` - Opts-in an object property (or class field) for mangling, when the property mangler is enabled.
 
 You can use either a `@` sign at the start, or a `#`.
 
@@ -1197,6 +1221,9 @@ function_always_inlined_here()
 function_cant_be_inlined_into_here()
 
 const x = /*#__PURE__*/i_am_dropped_if_x_is_not_used()
+
+function lookup(object, key) { return object[key]; }
+lookup({ i_will_be_mangled_too: "bar" }, /*@__KEY__*/ "i_will_be_mangled_too");
 ```
 
 ### ESTree / SpiderMonkey AST
@@ -1267,6 +1294,12 @@ expected as code is optimized and mappings are often simply not possible as
 some code no longer exists. For highest fidelity in source map debugging
 disable the `compress` option and just use `mangle`.
 
+When debugging, make sure you enable the **"map scopes"** feature to map mangled variable names back to their original names.  
+Without this, all variable values will be `undefined`. See https://github.com/terser/terser/issues/1367 for more details.
+<br/><br/>
+
+![image](https://user-images.githubusercontent.com/27283110/230441652-ac5cf6b0-5dc5-4ffc-9d8b-bd02875484f4.png)
+
 ### Compiler assumptions
 
 To allow for better optimizations, the compiler makes various assumptions:
@@ -1312,19 +1345,27 @@ $ rm -rf node_modules yarn.lock
 $ yarn
 ```
 
-<!-- API_REFERENCE:END -->
+<!-- MISCELLANEOUS:END -->
 
 # Reporting issues
 
-In the terser CLI we use [source-map-support](https://npmjs.com/source-map-support) to produce good error stacks. In your own app, you're expected to enable source-map-support (read their docs) to have nice stack traces that will help you write good issues.
+<!-- REPORTING_ISSUES:START -->
+
+## A minimal, reproducible example
+
+You're expected to provide a [minimal reproducible example] of input code that will demonstrate your issue.
+
+To get to this example, you can remove bits of your code and stop if your issue ceases to reproduce.
 
 ## Obtaining the source code given to Terser
 
-Because users often don't control the call to `await minify()` or its arguments, Terser provides a `TERSER_DEBUG_DIR` environment variable to make terser output some debug logs. If you're using a bundler or a project that includes a bundler and are not sure what went wrong with your code, pass that variable like so:
+Because users often don't control the call to `await minify()` or its arguments, Terser provides a `TERSER_DEBUG_DIR` environment variable to make terser output some debug logs.
 
-```
-$ TERSER_DEBUG_DIR=/path/to/logs command-that-uses-terser
-$ ls /path/to/logs
+These logs will contain the input code and options of each `minify()` call.
+
+```bash
+TERSER_DEBUG_DIR=/tmp/terser-log-dir command-that-uses-terser
+ls /tmp/terser-log-dir
 terser-debug-123456.log
 ```
 
@@ -1333,6 +1374,12 @@ If you're not sure how to set an environment variable on your shell (the above e
 ```
 > npx cross-env TERSER_DEBUG_DIR=/path/to/logs command-that-uses-terser
 ```
+
+## Stack traces
+
+In the terser CLI we use [source-map-support](https://npmjs.com/source-map-support) to produce good error stacks. In your own app, you're expected to enable source-map-support (read their docs) to have nice stack traces that will help you write good issues.
+
+<!-- REPORTING_ISSUES:END -->
 
 # README.md Patrons:
 

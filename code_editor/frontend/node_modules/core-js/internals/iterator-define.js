@@ -30,12 +30,15 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 
   var getIterationMethod = function (KIND) {
     if (KIND === DEFAULT && defaultIterator) return defaultIterator;
-    if (!BUGGY_SAFARI_ITERATORS && KIND in IterablePrototype) return IterablePrototype[KIND];
+    if (!BUGGY_SAFARI_ITERATORS && KIND && KIND in IterablePrototype) return IterablePrototype[KIND];
+
     switch (KIND) {
       case KEYS: return function keys() { return new IteratorConstructor(this, KIND); };
       case VALUES: return function values() { return new IteratorConstructor(this, KIND); };
       case ENTRIES: return function entries() { return new IteratorConstructor(this, KIND); };
-    } return function () { return new IteratorConstructor(this); };
+    }
+
+    return function () { return new IteratorConstructor(this); };
   };
 
   var TO_STRING_TAG = NAME + ' Iterator';
@@ -45,7 +48,7 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
     || IterablePrototype['@@iterator']
     || DEFAULT && IterablePrototype[DEFAULT];
   var defaultIterator = !BUGGY_SAFARI_ITERATORS && nativeIterator || getIterationMethod(DEFAULT);
-  var anyNativeIterator = NAME == 'Array' ? IterablePrototype.entries || nativeIterator : nativeIterator;
+  var anyNativeIterator = NAME === 'Array' ? IterablePrototype.entries || nativeIterator : nativeIterator;
   var CurrentIteratorPrototype, methods, KEY;
 
   // fix native
@@ -66,7 +69,7 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
   }
 
   // fix Array.prototype.{ values, @@iterator }.name in V8 / FF
-  if (PROPER_FUNCTION_NAME && DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
+  if (PROPER_FUNCTION_NAME && DEFAULT === VALUES && nativeIterator && nativeIterator.name !== VALUES) {
     if (!IS_PURE && CONFIGURABLE_FUNCTION_NAME) {
       createNonEnumerableProperty(IterablePrototype, 'name', VALUES);
     } else {

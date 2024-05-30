@@ -119,12 +119,12 @@ function TSParameterProperty(node) {
   }
   this._param(node.parameter);
 }
-function TSDeclareFunction(node) {
+function TSDeclareFunction(node, parent) {
   if (node.declare) {
     this.word("declare");
     this.space();
   }
-  this._functionHead(node);
+  this._functionHead(node, parent);
   this.tokenChar(59);
 }
 function TSDeclareMethod(node) {
@@ -148,8 +148,7 @@ function TSConstructSignatureDeclaration(node) {
 }
 function TSPropertySignature(node) {
   const {
-    readonly,
-    initializer
+    readonly
   } = node;
   if (readonly) {
     this.word("readonly");
@@ -157,12 +156,6 @@ function TSPropertySignature(node) {
   }
   this.tsPrintPropertyOrMethodName(node);
   this.print(node.typeAnnotation, node);
-  if (initializer) {
-    this.space();
-    this.tokenChar(61);
-    this.space();
-    this.print(initializer, node);
-  }
   this.tokenChar(59);
 }
 function tsPrintPropertyOrMethodName(node) {
@@ -319,8 +312,7 @@ function tsPrintBraced(printer, members, node) {
     }
     printer.dedent();
   }
-  printer.sourceWithOffset("end", node.loc, 0, -1);
-  printer.rightBrace();
+  printer.rightBrace(node);
 }
 function TSArrayType(node) {
   this.print(node.elementType, node, true);
@@ -402,7 +394,8 @@ function TSMappedType(node) {
     nameType,
     optional,
     readonly,
-    typeParameter
+    typeParameter,
+    typeAnnotation
   } = node;
   this.tokenChar(123);
   this.space();
@@ -428,9 +421,11 @@ function TSMappedType(node) {
     tokenIfPlusMinus(this, optional);
     this.tokenChar(63);
   }
-  this.tokenChar(58);
-  this.space();
-  this.print(node.typeAnnotation, node);
+  if (typeAnnotation) {
+    this.tokenChar(58);
+    this.space();
+    this.print(typeAnnotation, node);
+  }
   this.space();
   this.tokenChar(125);
 }

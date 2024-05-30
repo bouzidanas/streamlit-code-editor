@@ -1,1 +1,2 @@
-module.exports = require('./features');
+'use strict';
+module.exports = require('./full');

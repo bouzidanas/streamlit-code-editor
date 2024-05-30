@@ -1,3 +1,4 @@
+'use strict';
 var $ = require('../internals/export');
 var log1p = require('../internals/math-log1p');
 
@@ -9,9 +10,9 @@ var LN2 = Math.LN2;
 
 var FORCED = !$acosh
   // V8 bug: https://code.google.com/p/v8/issues/detail?id=3509
-  || Math.floor($acosh(Number.MAX_VALUE)) != 710
+  || Math.floor($acosh(Number.MAX_VALUE)) !== 710
   // Tor Browser bug: Math.acosh(Infinity) -> NaN
-  || $acosh(Infinity) != Infinity;
+  || $acosh(Infinity) !== Infinity;
 
 // `Math.acosh` method
 // https://tc39.es/ecma262/#sec-math.acosh

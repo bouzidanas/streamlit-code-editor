@@ -1,3 +1,4 @@
+'use strict';
 var fails = require('../internals/fails');
 var isCallable = require('../internals/is-callable');
 
@@ -5,8 +6,8 @@ var replacement = /#|\.prototype\./;
 
 var isForced = function (feature, detection) {
   var value = data[normalize(feature)];
-  return value == POLYFILL ? true
-    : value == NATIVE ? false
+  return value === POLYFILL ? true
+    : value === NATIVE ? false
     : isCallable(detection) ? fails(detection)
     : !!detection;
 };

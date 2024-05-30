@@ -1,4 +1,6 @@
+'use strict';
+var parent = require('../../stable/array/with');
+// TODO: Remove from `core-js@4`
 require('../../modules/esnext.array.with');
-var entryUnbind = require('../../internals/entry-unbind');
 
-module.exports = entryUnbind('Array', 'with');
+module.exports = parent;

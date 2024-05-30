@@ -55,6 +55,7 @@ import {
     AST_ConciseMethod,
     AST_Conditional,
     AST_Constant,
+    AST_DefClass,
     AST_Dot,
     AST_Expansion,
     AST_Function,
@@ -68,6 +69,7 @@ import {
     AST_PropAccess,
     AST_Scope,
     AST_Sequence,
+    AST_SimpleStatement,
     AST_Sub,
     AST_SymbolRef,
     AST_TemplateSegment,
@@ -153,25 +155,46 @@ def_drop_side_effect_free(AST_Arrow, return_null);
 
 def_drop_side_effect_free(AST_Class, function (compressor) {
     const with_effects = [];
+
+    if (this.is_self_referential() && this.has_side_effects(compressor)) {
+        return this;
+    }
+
     const trimmed_extends = this.extends && this.extends.drop_side_effect_free(compressor);
-    if (trimmed_extends)
-        with_effects.push(trimmed_extends);
+    if (trimmed_extends) with_effects.push(trimmed_extends);
+
     for (const prop of this.properties) {
         if (prop instanceof AST_ClassStaticBlock) {
-            if (prop.body.some(stat => stat.has_side_effects(compressor))) {
-                return this;
-            } else {
-                continue;
+            if (prop.has_side_effects(compressor)) {
+                return this; // Be cautious about these
             }
+        } else {
+            const trimmed_prop = prop.drop_side_effect_free(compressor);
+            if (trimmed_prop) with_effects.push(trimmed_prop);
         }
-
-        const trimmed_prop = prop.drop_side_effect_free(compressor);
-        if (trimmed_prop)
-            with_effects.push(trimmed_prop);
     }
+
     if (!with_effects.length)
         return null;
-    return make_sequence(this, with_effects);
+
+    const exprs = make_sequence(this, with_effects);
+    if (this instanceof AST_DefClass) {
+        // We want a statement
+        return make_node(AST_SimpleStatement, this, { body: exprs });
+    } else {
+        return exprs;
+    }
+});
+
+def_drop_side_effect_free(AST_ClassProperty, function (compressor) {
+    const key = this.computed_key() && this.key.drop_side_effect_free(compressor);
+
+    const value = this.static && this.value
+        && this.value.drop_side_effect_free(compressor);
+
+    if (key && value)
+        return make_sequence(this, [key, value]);
+    return key || value || null;
 });
 
 def_drop_side_effect_free(AST_Binary, function (compressor, first_in_statement) {
@@ -277,17 +300,6 @@ def_drop_side_effect_free(AST_ObjectProperty, function (compressor, first_in_sta
     return key || value;
 });
 
-def_drop_side_effect_free(AST_ClassProperty, function (compressor) {
-    const key = this.computed_key() && this.key.drop_side_effect_free(compressor);
-
-    const value = this.static && this.value
-        && this.value.drop_side_effect_free(compressor);
-
-    if (key && value)
-        return make_sequence(this, [key, value]);
-    return key || value || null;
-});
-
 def_drop_side_effect_free(AST_ConciseMethod, function () {
     return this.computed_key() ? this.key : null;
 });
@@ -309,7 +321,9 @@ def_drop_side_effect_free(AST_Dot, function (compressor, first_in_statement) {
     if (is_nullish_shortcircuited(this, compressor)) {
         return this.expression.drop_side_effect_free(compressor, first_in_statement);
     }
-    if (this.expression.may_throw_on_access(compressor)) return this;
+    if (!this.optional && this.expression.may_throw_on_access(compressor)) {
+        return this;
+    }
 
     return this.expression.drop_side_effect_free(compressor, first_in_statement);
 });
@@ -318,15 +332,17 @@ def_drop_side_effect_free(AST_Sub, function (compressor, first_in_statement) {
     if (is_nullish_shortcircuited(this, compressor)) {
         return this.expression.drop_side_effect_free(compressor, first_in_statement);
     }
-    if (this.expression.may_throw_on_access(compressor)) return this;
+    if (!this.optional && this.expression.may_throw_on_access(compressor)) {
+        return this;
+    }
+
+    var property = this.property.drop_side_effect_free(compressor);
+    if (property && this.optional) return this;
 
     var expression = this.expression.drop_side_effect_free(compressor, first_in_statement);
-    if (!expression)
-        return this.property.drop_side_effect_free(compressor, first_in_statement);
-    var property = this.property.drop_side_effect_free(compressor);
-    if (!property)
-        return expression;
-    return make_sequence(this, [expression, property]);
+
+    if (expression && property) return make_sequence(this, [expression, property]);
+    return expression || property;
 });
 
 def_drop_side_effect_free(AST_Chain, function (compressor, first_in_statement) {

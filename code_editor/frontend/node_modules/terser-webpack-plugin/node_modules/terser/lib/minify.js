@@ -17,6 +17,7 @@ import {
     mangle_properties,
     mangle_private_properties,
     reserve_quoted_keys,
+    find_annotated_props,
 } from "./propmangle.js";
 
 // to/from base64 functions
@@ -102,7 +103,7 @@ function log_input(files, options, fs, debug_folder) {
     fs.writeFileSync(log_path, "Options: \n" + options_str + "\n\nInput files:\n\n" + files_str(files) + "\n");
 }
 
-async function minify(files, options, _fs_module) {
+function* minify_sync_or_async(files, options, _fs_module) {
     if (
         _fs_module
         && typeof process === "object"
@@ -229,11 +230,18 @@ async function minify(files, options, _fs_module) {
                 }
             }
         }
+        if (options.parse.toplevel === null) {
+            throw new Error("no source file given");
+        }
 
         toplevel = options.parse.toplevel;
     }
     if (quoted_props && options.mangle.properties.keep_quoted !== "strict") {
         reserve_quoted_keys(toplevel, quoted_props);
+    }
+    var annotated_props;
+    if (options.mangle && options.mangle.properties) {
+        annotated_props = find_annotated_props(toplevel);
     }
     if (options.wrap) {
         toplevel = toplevel.wrap_commonjs(options.wrap);
@@ -268,7 +276,7 @@ async function minify(files, options, _fs_module) {
     }
     if (timings) timings.properties = Date.now();
     if (options.mangle && options.mangle.properties) {
-        toplevel = mangle_properties(toplevel, options.mangle.properties);
+        toplevel = mangle_properties(toplevel, options.mangle.properties, annotated_props);
     }
 
     // Format phase
@@ -280,10 +288,13 @@ async function minify(files, options, _fs_module) {
     if (options.format.spidermonkey) {
         result.ast = toplevel.to_mozilla_ast();
     }
+    let format_options;
     if (!HOP(options.format, "code") || options.format.code) {
-        if (!options.format.ast) {
+        // Make a shallow copy so that we can modify without mutating the user's input.
+        format_options = {...options.format};
+        if (!format_options.ast) {
             // Destroy stuff to save RAM. (unless the deprecated `ast` option is on)
-            options.format._destroy_ast = true;
+            format_options._destroy_ast = true;
 
             walk(toplevel, node => {
                 if (node instanceof AST_Scope) {
@@ -303,17 +314,17 @@ async function minify(files, options, _fs_module) {
             if (options.sourceMap.includeSources && files instanceof AST_Toplevel) {
                 throw new Error("original source content unavailable");
             }
-            options.format.source_map = await SourceMap({
+            format_options.source_map = yield* SourceMap({
                 file: options.sourceMap.filename,
                 orig: options.sourceMap.content,
                 root: options.sourceMap.root,
                 files: options.sourceMap.includeSources ? files : null,
             });
         }
-        delete options.format.ast;
-        delete options.format.code;
-        delete options.format.spidermonkey;
-        var stream = OutputStream(options.format);
+        delete format_options.ast;
+        delete format_options.code;
+        delete format_options.spidermonkey;
+        var stream = OutputStream(format_options);
         toplevel.print(stream);
         result.code = stream.get();
         if (options.sourceMap) {
@@ -321,7 +332,7 @@ async function minify(files, options, _fs_module) {
                 configurable: true,
                 enumerable: true,
                 get() {
-                    const map = options.format.source_map.getEncoded();
+                    const map = format_options.source_map.getEncoded();
                     return (result.map = options.sourceMap.asObject ? map : JSON.stringify(map));
                 },
                 set(value) {
@@ -331,7 +342,7 @@ async function minify(files, options, _fs_module) {
                     });
                 }
             });
-            result.decoded_map = options.format.source_map.getDecoded();
+            result.decoded_map = format_options.source_map.getDecoded();
             if (options.sourceMap.url == "inline") {
                 var sourceMap = typeof result.map === "object" ? JSON.stringify(result.map) : result.map;
                 result.code += "\n//# sourceMappingURL=data:application/json;charset=utf-8;base64," + to_base64(sourceMap);
@@ -346,8 +357,8 @@ async function minify(files, options, _fs_module) {
             options.nameCache.props = cache_to_json(options.mangle.properties.cache);
         }
     }
-    if (options.format && options.format.source_map) {
-        options.format.source_map.destroy();
+    if (format_options && format_options.source_map) {
+        format_options.source_map.destroy();
     }
     if (timings) {
         timings.end = Date.now();
@@ -365,7 +376,37 @@ async function minify(files, options, _fs_module) {
     return result;
 }
 
+async function minify(files, options, _fs_module) {
+    const gen = minify_sync_or_async(files, options, _fs_module);
+
+    let yielded;
+    let val;
+    do {
+        val = gen.next(await yielded);
+        yielded = val.value;
+    } while (!val.done);
+
+    return val.value;
+}
+
+function minify_sync(files, options, _fs_module) {
+    const gen = minify_sync_or_async(files, options, _fs_module);
+
+    let yielded;
+    let val;
+    do {
+        if (yielded && typeof yielded.then === "function") {
+            throw new Error("minify_sync cannot be used with the legacy source-map module");
+        }
+        val = gen.next(yielded);
+        yielded = val.value;
+    } while (!val.done);
+
+    return val.value;
+}
+
 export {
   minify,
+  minify_sync,
   to_ascii,
 };
