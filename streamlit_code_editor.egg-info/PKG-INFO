@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: streamlit-code-editor
-Version: 0.1.14
+Version: 0.1.20
 Summary: React-ace editor customized for Streamlit
 Home-page: https://github.com/bouzidanas/streamlit-code-editor
 Author: Anas Bouzid

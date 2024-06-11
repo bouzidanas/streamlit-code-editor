@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 # the component, and True when we're ready to package and distribute it.
 # (This is, of course, optional - there are innumerable ways to manage your
 # release process.)
-_RELEASE = True
+_RELEASE = False
 
 # Declare a Streamlit component. `declare_component` returns a function
 # that is used to create instances of the component. We're naming this
@@ -81,6 +81,11 @@ def code_editor(code, lang='python', theme="default", shortcuts="vscode", height
 # During development, we can run this just as we would any other Streamlit
 # app: `$ streamlit run code_editor/__init__.py`
 if not _RELEASE:
+    
+    if "editorID" not in st.session_state:
+        st.session_state.editorID = ""
+    if "suggestion" not in st.session_state:
+        st.session_state.suggestion = ""
 
     with open('../examples/resources/example_custom_buttons_bar_alt.json') as json_button_file_alt:
         custom_buttons_alt = json.load(json_button_file_alt)
@@ -180,8 +185,21 @@ if not _RELEASE:
         st.write("Response type: ", response_dict['type'])
         st.code(response_dict['text'], language=response_dict['lang'])
     st.write("### Code Editor:")
-    st.code(input, language=language)
+    # st.code(input, language=language)
     # st.write("You can find more examples in the [docs]()")
 
-    new_response = code_editor("print('Hello World!')", lang="python", height = 22, buttons=btn_settings_editor_btns, options={"wrap": wrap}, allow_reset=True, key="code_editor3", ghost_text="Type your code here...", response_mode="debounce")
+    new_response = code_editor("print('Hel", lang="python", height = 22, options={"wrap": wrap}, props={ "enableBasicAutocompletion": False, "enableLiveAutocompletion": False, "enableSnippets": False, "debounceChangePeriod": 600}, allow_reset=True, key="code_editor3", ghost_text=st.session_state.suggestion, response_mode=["debounce", "blur"])
     st.write(new_response)
+    st.write(new_response["text"].split("\n"))
+    if new_response["id"] != st.session_state.editorID:
+        st.session_state.editorID = new_response["id"]
+        line = new_response["text"].split("\n")[new_response["cursor"]["row"]]
+        if new_response['type'] == "change" and line in "print('Hello World!')":
+            st.session_state.suggestion = "print('Hello World!')".replace(line, "")
+            st.experimental_rerun()
+        elif new_response['type'] == "blur":
+            st.session_state.suggestion = " "
+            st.experimental_rerun()
+
+        
+

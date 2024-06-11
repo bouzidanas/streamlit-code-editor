@@ -174,14 +174,20 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
     }
   }, [args.focus]);
 
+  const onInputHandler = (event: any) => {
+    // const newText = aceEditor.current?.editor.getValue();
+    // newText && setCode(newText);
+  }
+
   const onChangeHandler = (newCode: string) => {
-    setCode(newCode);
+    const newText = aceEditor.current?.editor.getValue() ?? newCode
+    setCode(newText);
 
     const responseMode = typeof args["response_mode"] === "string" ? [args["response_mode"]] : args["response_mode"];
     if (responseMode.includes("debounce") && aceEditor.current && aceEditor.current.editor) {
       const editor = aceEditor.current.editor as any;
       const outgoingMode = editor.getSession().$modeId.split("/").pop();
-      Streamlit.setComponentValue({id: v1().slice(0,8), type: "change", lang: outgoingMode, text: newCode, selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
+      Streamlit.setComponentValue({id: v1().slice(0,8), type: "change", lang: outgoingMode, text: newText, selected: editor.getSelectedText(), cursor: editor.getCursorPosition()});
     }
   }
   
@@ -331,13 +337,19 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
     {
       name: 'appendGhostText',
       description: "Add ghost test to end of line",
-      bindKey: { win: 'Ctrl-/', mac: 'Command-Alt-N' },
+      bindKey: { win: 'Ctrl-/', mac: 'Command-/' },
       exec: (editor: any) => {
-        const ghostText = args['ghost_text'];
+        console.log("appendGhostText");
+        // get cursor position
+        const cursorPos = editor.getCursorPosition();
+        const line = editor.session.getLine(cursorPos.row);
+        const ghostText = editor.renderer.$ghostText;
+        console.log(ghostText);
         if(ghostText){
-          const cursorPos = editor.getCursorPosition();
-          const line = editor.session.getLine(cursorPos.row);
-          editor.session.replace({start: {row: cursorPos.row, column: line.length}, end: {row: cursorPos.row, column: line.length}}, ghostText);
+          editor.session.replace({start: {"row": cursorPos.row, "column": line.length}, end: {"row": cursorPos.row, "column": line.length}}, ghostText.text);
+          // editor.renderer.$ghostText = "";
+          editor.removeGhostText();
+          // editor.renderer.removeGhostText();
         }
       }
     },
@@ -660,7 +672,8 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
          props={aceProps} 
          onChange={onChangeHandler}
          onSelectionChange={onSelectionChangeHandler}
-         onBlur={onEditorBlur}  
+         onBlur={onEditorBlur} 
+          onInput={onInputHandler} 
         />
       );
   }, [editorArgsString, themeProp, snippets, keybindingAddRemove, reset.current]);

@@ -36,11 +36,16 @@ export type EditorProps = {
     replaceCompleter: boolean,
     onChange: (value: string, event?: any) => void,
     onSelectionChange: (value: any, event?: any) => void,
-    onBlur: (event: any, editor?: any) => void
+    onBlur: (event: any, editor?: any) => void,
+    onInput: ((event?: any) => void)
   }
   
-export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, completions, ghostText, keybindingString, editorRef, code, replaceCompleter, onChange, onSelectionChange, onBlur }: EditorProps ) => {
-    
+export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands, completions, ghostText, keybindingString, editorRef, code, replaceCompleter, onChange, onSelectionChange, onBlur, onInput }: EditorProps ) => {
+  
+  const preventGhostText = useRef<boolean>(false);
+
+  preventGhostText.current = false;
+
   let commandsList = useRef<object[]>(commands);
   useEffect(() => {
     if(editorRef.current){
@@ -112,14 +117,24 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
   }, [snippetString, keybindingString]);
 
   useEffect(() => {
-    if(editorRef.current && ghostText !== ""){
-      const aceInline = ace.require("ace/autocomplete/inline").AceInline;
-      const inline = new aceInline();
-      const testCompletion: ace.Ace.Completion = {
-        snippet: ghostText,
+    if(editorRef.current){
+      console.log("cursor @ useEffect", editorRef.current.editor.getCursorPosition())
+      if (ghostText === "") {
+        // editorRef.current.editor.removeGhostText();
       }
-      const result = inline.show(editorRef.current.editor, testCompletion, "");
-      !result && inline.hide() && console.log("failed to show ghost text");
+      else if (!preventGhostText.current) {
+        // editorRef.current.editor.setGhostText(ghostText, undefined);
+        // Can also use editorRef.current.editor.addGhostText();
+        // However, adding ghost text directly using the editor skips important 
+        // checks for config flags that could disable ghost text.
+        const aceInline = ace.require("ace/autocomplete/inline").AceInline;
+        const inline = new aceInline();
+        const testCompletion: ace.Ace.Completion = {
+          snippet: ghostText,
+        }
+        const result = inline.show(editorRef.current.editor, testCompletion, "");
+        !result && inline.hide() && console.log("failed to show ghost text");
+      }
     }
   }, [ghostText, editorRef]);
 
@@ -135,6 +150,10 @@ export const Editor = ({ lang, theme, shortcuts, props, snippetString, commands,
            onChange={onChange}
            onSelectionChange={onSelectionChange}
            onBlur={onBlur}
+           onCursorChange={(value, event) => {
+              
+           }}
+           onInput={onInput}
            {...props}/>
   );
 };
