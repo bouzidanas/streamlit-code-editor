@@ -200,3 +200,21 @@ floating_side_bar = '''
 
 with col2:
     st.markdown(floating_side_bar, unsafe_allow_html=True)
+
+st.markdown("### Custom completions")
+st.markdown("If you want to turn off the autocompletion feature of the Ace Editor, you can do so by setting the `enableBasicAutocompletion`, `enableLiveAutocompletion`, and `enableSnippets` properties to `False` in the `props` dictionary. A simple example is shown below:")
+st.code("""response_dict = code_editor(your_code_string, props={ "enableBasicAutocompletion": False, "enableLiveAutocompletion": False, "enableSnippets": False})""", language="python")
+st.markdown("In some cases, you might want to provide your own completions for the Ace Editor. This can be done by passing in an array of completions to the `completions` argument of the `code_editor` function. Each completion in the array should be a dictionary with the following properties:")
+st.code("""{
+  "caption": "[trigger/label]",
+  "value": "[code to insert]",
+  "meta": "[type/scope]",
+  "name": "[name]",
+  "score": 400
+}""", language="python")
+st.markdown("The `caption` property is the text that will be displayed in the completion list. The `value` property is the code that will be inserted into the editor when the completion is selected. The `meta` property is the type or scope of the completion that appears next to the caption. The `name` property is the name of the completion. The `score` property is a number that orders different completions with the same caption. The following example shows how to add a completion to the Ace Editor:")
+st.code("""response_dict = code_editor(code, lang=language, completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], allow_reset=True)""", language="python")
+st.markdown("In the example above, a single completion is added to the pre-existing default completions. The new completion will be displayed as 'AAA' in the completion list. When selected, the code 'BBB' will be inserted into the editor. The completion will have a type of 'CCC' and a name of 'DDD'.")
+st.image("./pages/resources/completion.png")
+st.markdown("To remove/replace the pre-existing completions loaded by default, you can set the `replace_completer` argument to `True` in the `code_editor` function. This will remove the default completions and only use the completions you provide.")
+st.code("""response_dict = code_editor(your_code_string, completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], replace_completer=True)""", language="python")
