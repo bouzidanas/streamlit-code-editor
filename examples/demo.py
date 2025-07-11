@@ -95,4 +95,4 @@ response_dict = code_editor(demo_sample_python_code,  height = height, lang=lang
 if response_dict['type'] != "" and len(response_dict['id']) != 0:
     st.write(response_dict)
 
-# st.write("You can find more examples in the [docs]()")
+response_dict2 = code_editor(" ", completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], replace_completer=True)
