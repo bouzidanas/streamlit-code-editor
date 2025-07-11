@@ -18121,8 +18121,12 @@ var VirtualRenderer = /** @class */ (function () {
         var _self = this;
         this.container = container || dom.createElement("div");
         dom.addCssClass(this.container, "ace_editor");
-        if (dom.HI_DPI)
-            dom.addCssClass(this.container, "ace_hidpi");
+        //-------------------------------------------------------------------------
+        // Turn off HI_DPI class because it is causing issues with scroll.
+
+        // if (dom.HI_DPI)
+        //     dom.addCssClass(this.container, "ace_hidpi");
+        //-------------------------------------------------------------------------
         this.setTheme(theme);
         if (config.get("useStrictCSP") == null)
             config.set("useStrictCSP", false);
