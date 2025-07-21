@@ -11,7 +11,6 @@ section div.block-container {
   padding-left: 4rem;
   padding-right: 4rem;
   max-width: 80rem;
-  position: fixed;
 }  
 .floating-side-bar {
     display: flex;
@@ -102,47 +101,3 @@ floating_side_bar = '''
 
 with col2:
     st.markdown(floating_side_bar, unsafe_allow_html=True)
-
-
-
-
-
-
-#====================================================================================
-# Sample string containing code
-# code_input = \
-#         '''#!/usr/local/bin/python
-
-# import string, sys
-
-# # If no arguments were given, print a helpful message
-# if len(sys.argv)==1:
-#     print 
-#     sys.exit(0)
-
-# # Loop over the arguments
-# for i in sys.argv[1:]:
-#     try:
-#         fahrenheit=float(string.atoi(i))
-#     except string.atoi_error:
-#         print repr(i), "not a numeric value"
-#     else:
-#         celsius=(fahrenheit-32)*5.0/9.0
-#         print 'Done' '''
-
-# # Opening JSON file
-# with open('example_info_bar.json') as json_info_file:
-#     infoBar = json.load(json_info_file)
-
-# # Opening text file
-# with open('code_editor.scss') as css_file:
-#     css_text = css_file.read()
-
-# #comp_props = {"css": css_text, "globalCSS": "body > #root~div.ace-streamlit-dark.ace_editor.ace_autocomplete{\n    background-color: #111827;\n}\nbody > #root~div .ace_prompt_container {\n    background: #111827;\n}"}
-# comp_props = {"css": css_text, "globalCSS": ":root {--streamlit-dark-background-color: #111827;}"}
-
-
-# code_back = code_editor(code_input, lang="python", height = [19, 22], theme="contrast", buttons=custom_buttons, component_props=comp_props, key="editor2")
-# if code_back['type'] == "submit" and len(code_back['text']) != 0:
-#     st.write("TYPE: ", code_back['type'])
-#     st.code(code_back['text'], language=code_back['lang'])
