@@ -711,7 +711,7 @@ const CodeEditor = ({ args, width, disabled, theme }: CodeEditorProps) => {
   }, [componentContainerProps.globalCSS, disabled]);
 
   return (
-    <StyledCodeEditor ref={observe} style={componentContainerProps.style} css={componentContainerProps.css} className={"streamlit_code-editor " + theme?.base ?? "" } >
+    <StyledCodeEditor ref={observe} style={componentContainerProps.style} css={componentContainerProps.css} className={"streamlit_code-editor " + (theme?.base ?? "") } >
       {globalCSS}
       {editor}
       {buttons}

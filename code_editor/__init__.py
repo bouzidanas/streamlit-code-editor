@@ -82,6 +82,19 @@ def code_editor(code, lang='python', theme="default", shortcuts="vscode", height
 # app: `$ streamlit run code_editor/__init__.py`
 if not _RELEASE:
 
+    html_style_string = '''
+<style>
+.streamlit_code-editor .ace_content .ace_focus .ace_marker-layer .ace_bracket {
+    opacity: 1;
+} 
+.streamlit_code-editor .ace_content .ace_marker-layer .ace_bracket {
+    opacity: 0; 
+}
+</style>
+'''
+
+    st.markdown(html_style_string, unsafe_allow_html=True)
+
     with open('../examples/resources/example_custom_buttons_bar_alt.json') as json_button_file_alt:
         custom_buttons_alt = json.load(json_button_file_alt)
 
@@ -169,10 +182,23 @@ if not _RELEASE:
 
     st.write("### Output:")
     # construct props dictionary (->Ace Editor)
-    ace_props = {"style": {"borderRadius": "0px 0px 8px 8px"}}
+
+    test_comp_props = {"css": ".error-marker { position: absolute; background-color: #ffcccc; }\n"}
+    ace_props = {"style": {"borderRadius": "0px 0px 8px 8px"}, 
+                #  "markers": [{ "startRow": 3, "startCol": 2, "endRow": 4, "endCol": 7, "className": 'error-marker', "type": 'background' }],
+                 "annotations": [
+                    {
+                        "row": 1,
+                        "column": 11,
+                        "text": "Use '-' instead of '+'",
+                        "type": "error",  # Can be 'error', 'warning', or 'info'
+                    },
+                 ],
+                 "showGutter": True,
+                }
 
     input = st.text_area("Input:", demo_sample_python_code, height=200)
-    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], focus=focus, buttons=btns, info=info_bar, props=ace_props, options={"wrap": wrap}, allow_reset=True, response_mode=["debounce", "blur"], key="code_editor_demo")
+    response_dict = code_editor(input,  height = height, lang=language, theme=theme, shortcuts=shortcuts, completions=[{"caption": "AAA", "value": "BBB", "meta": "CCC", "name": "DDD", "score": 400}], focus=focus, buttons=btns, info=info_bar, props=ace_props, component_props=test_comp_props, options={"wrap": wrap}, allow_reset=True, response_mode=["debounce", "blur"], key="code_editor_demo")
 
     st.write(response_dict)
 
